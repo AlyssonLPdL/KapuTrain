@@ -6,6 +6,15 @@ const ROTACAO = ['pernas', 'isoA', 'peito', 'isoB', 'costas', 'isoC'];
 const RANGES_REPS = ['4-6', '6-8', '8-10', '10-12'];
 const RANGES_SEG  = ['15-20s', '20-25s', '25-30s', '30-40s'];
 
+// MARCA VISUAL DA VERSÃO — pra confirmar que o JS novo carregou
+window.addEventListener('DOMContentLoaded', () => {
+  const tag = document.createElement('div');
+  tag.id = 'versao-tag';
+  tag.textContent = 'v3';
+  tag.style.cssText = 'position:fixed;bottom:80px;right:8px;font-size:10px;color:#22c55e;z-index:9998;background:rgba(0,0,0,.6);padding:2px 6px;border-radius:4px;';
+  document.body.appendChild(tag);
+});
+
 function getRanges(ex) {
   return ex.unidade === 'seg' ? RANGES_SEG : RANGES_REPS;
 }
