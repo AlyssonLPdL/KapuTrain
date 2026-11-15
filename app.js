@@ -27,6 +27,10 @@ function showScreen(name) {
     b.classList.toggle('active', b.dataset.screen === name);
   });
 
+  if (name === 'history') {
+    try { renderHistory(); } catch (e) { console.error(e); }
+  }
+
   window.scrollTo(0, 0);
 }
 
@@ -43,10 +47,23 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
 async function init() {
   DATA = await loadData();
 
-  // Renderiza cada tela isoladamente — se uma quebrar, as outras continuam
-  try { renderHome(); } catch (e) { console.error('renderHome falhou:', e); }
-  try { renderHistory(); } catch (e) { console.error('renderHistory falhou:', e); }
+  // Renderização isolada: se um quebrar, o outro continua
+  try { renderHome(); } catch (e) {
+    console.error('renderHome falhou:', e);
+    mostrarErroBoot('renderHome: ' + e.message);
+  }
 
+  try { renderHistory(); } catch (e) {
+    console.error('renderHistory falhou:', e);
+    mostrarErroBoot('renderHistory: ' + e.message);
+  }
+
+  // Reforço: garante renderHistory após o DOM estabilizar
+  setTimeout(() => {
+    try { renderHistory(); } catch (e) { console.error(e); }
+  }, 50);
+
+  // listeners...
   document.getElementById('btn-voltar').addEventListener('click', voltarDoTreino);
   document.getElementById('btn-editar').addEventListener('click', () => {
     if (session) abrirModalTreino(session.treinoId);
@@ -58,11 +75,9 @@ async function init() {
   document.getElementById('btn-save-edit').addEventListener('click', salvarTreino);
   document.getElementById('modal-history-close').addEventListener('click', () => fecharModal('modal-history'));
   document.getElementById('modal-info-close').addEventListener('click', () => fecharModal('modal-info'));
-
   document.getElementById('modal-cat-close').addEventListener('click', () => fecharModal('modal-categorias'));
   document.getElementById('btn-add-cat').addEventListener('click', adicionarCategoriaNoModal);
   document.getElementById('btn-save-cat').addEventListener('click', salvarCategorias);
-
   document.getElementById('btn-categorias').addEventListener('click', abrirModalCategorias);
   document.getElementById('btn-novo-treino').addEventListener('click', () => abrirModalTreino(null));
 
@@ -75,6 +90,18 @@ async function init() {
   const hoje = new Date();
   const opts = { weekday: 'long', day: 'numeric', month: 'long' };
   document.getElementById('hoje-text').textContent = hoje.toLocaleDateString('pt-BR', opts);
+}
+
+function mostrarErroBoot(msg) {
+  // Faixa temporária pra diagnóstico no celular
+  let box = document.getElementById('boot-error');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'boot-error';
+    box.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#b91c1c;color:#fff;padding:8px 12px;font-size:12px;z-index:9999;font-family:monospace;white-space:pre-wrap;';
+    document.body.appendChild(box);
+  }
+  box.textContent += '⚠ ' + msg + '\n';
 }
 
 // ===== HOME =====
@@ -433,12 +460,13 @@ function renderHistory() {
   const list = document.getElementById('history-list');
   const sub = document.getElementById('history-sub');
   if (!list || !sub) {
-    console.error('renderHistory: elementos não encontrados');
+    console.warn('renderHistory: elementos do DOM não encontrados ainda');
     return;
   }
+
   list.innerHTML = '';
 
-  const hist = Array.isArray(DATA.historico) ? DATA.historico : [];
+  const hist = Array.isArray(DATA?.historico) ? DATA.historico : [];
   const total = hist.length;
 
   sub.textContent = total === 0 ? 'Nenhum treino ainda'
@@ -453,7 +481,6 @@ function renderHistory() {
     const d = new Date(reg.data);
     const dataFmt = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) +
       ' · ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
     const exs = Array.isArray(reg.exercicios) ? reg.exercicios : [];
     const feitos = exs.filter(ex => Array.isArray(ex.series) && ex.series.some(s => s.feito)).length;
 
