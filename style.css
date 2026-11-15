@@ -721,3 +721,97 @@ body.workout-active .bottom-nav { display: none; }
 .hist-detail-ex:last-child { border-bottom: none; }
 .hist-detail-ex strong { display: block; margin-bottom: 4px; }
 .hist-detail-ex .serie-line { color: var(--text-muted); font-size: 0.82rem; }
+
+/* ===== Cards clicáveis com botão de editar ===== */
+.treino-card {
+  position: relative;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform .15s, background .15s;
+}
+.treino-card:active { transform: scale(0.97); background: var(--surface-2); }
+
+.treino-card-edit {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  transition: background .15s;
+}
+.treino-card-edit:active { background: rgba(255,255,255,0.15); }
+
+.treino-card .treino-tag { padding-right: 40px; }
+
+/* ===== Modal editar treino: campos de nome/categoria ===== */
+.edit-treino-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.edit-treino-header label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 6px;
+}
+.edit-treino-header input,
+.edit-treino-header select {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+.edit-treino-header input:focus,
+.edit-treino-header select:focus { outline: none; border-color: var(--primary); }
+
+/* ===== Modal de categorias ===== */
+.cat-row {
+  display: grid;
+  grid-template-columns: 1fr 40px;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.cat-row input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+.cat-row input:focus { outline: none; border-color: var(--primary); }
+
+.modal-alert {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}

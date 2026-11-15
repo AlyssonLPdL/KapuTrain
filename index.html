@@ -18,6 +18,7 @@
         <h1>Treinos</h1>
         <p class="header-sub" id="hoje-text">Hoje</p>
       </div>
+      <button class="btn-icon" id="btn-categorias" aria-label="Gerenciar categorias" style="margin-left:auto;">⚙️</button>
     </header>
 
     <main class="app-main">
@@ -30,15 +31,7 @@
         <span class="hero-cta">Iniciar treino →</span>
       </button>
 
-      <section class="section">
-        <h2 class="section-title">Musculação</h2>
-        <div class="treinos-grid" id="grid-musc"></div>
-      </section>
-
-      <section class="section">
-        <h2 class="section-title">Isometria</h2>
-        <div class="treinos-grid" id="grid-iso"></div>
-      </section>
+      <button class="btn-primary" id="btn-novo-treino" style="margin-top:20px;">+ Novo treino</button>
     </main>
   </div>
 
@@ -86,7 +79,7 @@
     </button>
   </nav>
 
-  <!-- MODAL: editar treino -->
+  <!-- MODAL: editar/criar treino -->
   <div class="modal-overlay" id="modal-edit">
     <div class="modal">
       <div class="modal-header">
@@ -109,6 +102,32 @@
         <button class="btn-icon" id="modal-history-close">✕</button>
       </div>
       <div class="modal-body" id="modal-history-body"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: info exercício -->
+  <div class="modal-overlay" id="modal-info">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-info-title">Exercício</h2>
+        <button class="btn-icon" id="modal-info-close">✕</button>
+      </div>
+      <div class="modal-body" id="modal-info-body"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: categorias -->
+  <div class="modal-overlay" id="modal-categorias">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Categorias</h2>
+        <button class="btn-icon" id="modal-cat-close">✕</button>
+      </div>
+      <div class="modal-body" id="modal-cat-body"></div>
+      <div class="modal-footer">
+        <button class="btn-ghost" id="btn-add-cat">+ Categoria</button>
+        <button class="btn-primary btn-sm" id="btn-save-cat">Salvar</button>
+      </div>
     </div>
   </div>
 

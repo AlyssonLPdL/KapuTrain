@@ -1,6 +1,6 @@
 // app.js
 let DATA = null;
-let session = null; // treino em andamento
+let session = null;
 
 const ROTACAO = ['pernas', 'isoA', 'peito', 'isoB', 'costas', 'isoC'];
 const RANGES_REPS = ['4-6', '6-8', '8-10', '10-12'];
@@ -46,77 +46,119 @@ async function init() {
   renderHistory();
 
   document.getElementById('btn-voltar').addEventListener('click', voltarDoTreino);
-  document.getElementById('btn-editar').addEventListener('click', abrirModalEditar);
+  document.getElementById('btn-editar').addEventListener('click', () => {
+    if (session) abrirModalTreino(session.treinoId);
+  });
   document.getElementById('btn-finalizar').addEventListener('click', finalizarTreino);
 
   document.getElementById('modal-edit-close').addEventListener('click', () => fecharModal('modal-edit'));
   document.getElementById('btn-add-ex').addEventListener('click', adicionarExercicioNoModal);
-  document.getElementById('btn-save-edit').addEventListener('click', salvarEdicao);
+  document.getElementById('btn-save-edit').addEventListener('click', salvarTreino);
   document.getElementById('modal-history-close').addEventListener('click', () => fecharModal('modal-history'));
   document.getElementById('modal-info-close').addEventListener('click', () => fecharModal('modal-info'));
 
-  // fechar modais ao clicar no overlay
+  document.getElementById('modal-cat-close').addEventListener('click', () => fecharModal('modal-categorias'));
+  document.getElementById('btn-add-cat').addEventListener('click', adicionarCategoriaNoModal);
+  document.getElementById('btn-save-cat').addEventListener('click', salvarCategorias);
+
+  document.getElementById('btn-categorias').addEventListener('click', abrirModalCategorias);
+  document.getElementById('btn-novo-treino').addEventListener('click', () => abrirModalTreino(null));
+
   document.querySelectorAll('.modal-overlay').forEach(ov => {
     ov.addEventListener('click', e => {
       if (e.target === ov) ov.classList.remove('active');
     });
   });
 
-  // data do header
   const hoje = new Date();
   const opts = { weekday: 'long', day: 'numeric', month: 'long' };
-  document.getElementById('hoje-text').textContent =
-    hoje.toLocaleDateString('pt-BR', opts);
+  document.getElementById('hoje-text').textContent = hoje.toLocaleDateString('pt-BR', opts);
 }
 
 // ===== HOME =====
 function proximoSugerido() {
-  if (!DATA.historico.length) return 'pernas';
+  const ids = Object.keys(DATA.treinos);
+  if (!ids.length) return null;
+  if (!DATA.historico.length) return ids[0];
+
   const ultimo = DATA.historico[0].treinoId;
   const idx = ROTACAO.indexOf(ultimo);
-  if (idx === -1) return 'pernas';
-  return ROTACAO[(idx + 1) % ROTACAO.length];
+
+  if (idx === -1) {
+    const pos = ids.indexOf(ultimo);
+    return ids[(pos + 1) % ids.length] || ids[0];
+  }
+  for (let i = 1; i <= ROTACAO.length; i++) {
+    const cand = ROTACAO[(idx + i) % ROTACAO.length];
+    if (DATA.treinos[cand]) return cand;
+  }
+  return ids[0];
 }
 
 function renderHome() {
-  const proxId = proximoSugerido();
-  const prox = DATA.treinos[proxId];
-
   const hero = document.getElementById('hero-card');
-  document.getElementById('hero-nome').textContent = prox.nome;
-  document.getElementById('hero-info').textContent =
-    `${prox.exercicios.length} exercícios`;
-  hero.onclick = () => iniciarTreino(proxId);
+  const proxId = proximoSugerido();
 
-  const musc = ['pernas', 'peito', 'costas'];
-  const iso = ['isoA', 'isoB', 'isoC'];
+  if (!proxId) {
+    hero.style.display = 'none';
+  } else {
+    hero.style.display = '';
+    const prox = DATA.treinos[proxId];
+    document.getElementById('hero-nome').textContent = prox.nome;
+    document.getElementById('hero-info').textContent = `${prox.exercicios.length} exercícios`;
+    hero.onclick = () => iniciarTreino(proxId);
+  }
 
-  renderGrid('grid-musc', musc);
-  renderGrid('grid-iso', iso);
-}
+  // remove seções antigas
+  document.querySelectorAll('#screen-home .app-main .section').forEach(s => s.remove());
 
-function renderGrid(elId, ids) {
-  const grid = document.getElementById(elId);
-  grid.innerHTML = '';
-  ids.forEach(id => {
-    const t = DATA.treinos[id];
-    if (!t) return;
-    const isIso = id.startsWith('iso');
-    const card = document.createElement('button');
-    card.className = 'treino-card';
-    card.innerHTML = `
-      <span class="treino-tag ${isIso ? 'iso' : 'musc'}">${isIso ? 'ISO' : 'MUSC'}</span>
-      <h3>${t.nome}</h3>
-      <p>${t.exercicios.length} exercícios</p>
-    `;
-    card.onclick = () => iniciarTreino(id);
-    grid.appendChild(card);
+  const main = document.querySelector('#screen-home .app-main');
+  const novoBtn = document.getElementById('btn-novo-treino');
+
+  DATA.categorias.forEach(cat => {
+    const treinosDaCat = Object.entries(DATA.treinos)
+      .filter(([, t]) => t.categoria === cat.id);
+
+    const section = document.createElement('section');
+    section.className = 'section';
+    section.innerHTML = `<h2 class="section-title">${escape(cat.nome)}</h2><div class="treinos-grid"></div>`;
+    const grid = section.querySelector('.treinos-grid');
+
+    if (treinosDaCat.length === 0) {
+      grid.innerHTML = `<p style="grid-column:1/-1;color:var(--text-muted);font-size:.85rem;margin:0;">Nenhum treino nesta categoria.</p>`;
+    } else {
+      treinosDaCat.forEach(([id, t]) => {
+        const isIso = cat.id === 'iso' || cat.id.startsWith('iso');
+        const card = document.createElement('div');
+        card.className = 'treino-card';
+        card.dataset.treinoId = id;
+        card.innerHTML = `
+          <span class="treino-tag ${isIso ? 'iso' : 'musc'}">${escape(cat.nome.slice(0, 5).toUpperCase())}</span>
+          <h3>${escape(t.nome)}</h3>
+          <p>${t.exercicios.length} exercícios</p>
+          <button class="treino-card-edit" data-treino-id="${id}" aria-label="Editar treino">✏️</button>
+        `;
+        card.addEventListener('click', e => {
+          if (e.target.closest('.treino-card-edit')) return;
+          iniciarTreino(id);
+        });
+        card.querySelector('.treino-card-edit').addEventListener('click', e => {
+          e.stopPropagation();
+          abrirModalTreino(id);
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    if (novoBtn) main.insertBefore(section, novoBtn);
+    else main.appendChild(section);
   });
 }
 
 // ===== INICIAR TREINO =====
 function iniciarTreino(treinoId) {
   const t = DATA.treinos[treinoId];
+  if (!t) return;
   session = {
     treinoId,
     treinoNome: t.nome,
@@ -230,14 +272,12 @@ function setupCarouselEvents() {
   const carousel = document.getElementById('carousel');
 
   carousel.addEventListener('click', e => {
-    // 1) Info do exercício
     const infoBtn = e.target.closest('.info-btn');
     if (infoBtn) {
       abrirInfoExercicio(+infoBtn.dataset.ex);
       return;
     }
 
-    // 2) Check
     const check = e.target.closest('.check-btn');
     if (check) {
       const exIdx = +check.dataset.ex;
@@ -249,7 +289,6 @@ function setupCarouselEvents() {
       return;
     }
 
-    // 3) Rep range pill
     const pill = e.target.closest('.rep-pill');
     if (pill) {
       const exIdx = +pill.dataset.ex;
@@ -261,7 +300,6 @@ function setupCarouselEvents() {
       return;
     }
 
-    // 4) Weight stepper
     const wBtn = e.target.closest('.weight-btn');
     if (wBtn) {
       const exIdx = +wBtn.dataset.ex;
@@ -274,7 +312,6 @@ function setupCarouselEvents() {
       return;
     }
 
-    // 5) +/- séries
     const seriesBtn = e.target.closest('.btn-series');
     if (seriesBtn) {
       const card = seriesBtn.closest('.exercise-card');
@@ -327,7 +364,6 @@ function renderDots() {
 let carouselObserver = null;
 function setupCarouselObserver() {
   const carousel = document.getElementById('carousel');
-
   if (carouselObserver) carouselObserver.disconnect();
   carouselObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -339,7 +375,6 @@ function setupCarouselObserver() {
       }
     });
   }, { root: carousel, threshold: 0.6 });
-
   carousel.querySelectorAll('.exercise-card').forEach(c => carouselObserver.observe(c));
 }
 
@@ -355,21 +390,17 @@ function setupSeriesCarouselObserver() {
         }
       });
     }, { root: carousel, threshold: 0.6 });
-
     carousel.querySelectorAll('.serie-slide').forEach(s => observer.observe(s));
   });
 }
 
 // ===== FINALIZAR =====
 async function finalizarTreino() {
-  const algumPreenchido = session.exercicios.some(ex =>
-    ex.series.some(s => s.feito)
-  );
+  const algumPreenchido = session.exercicios.some(ex => ex.series.some(s => s.feito));
   if (!algumPreenchido) {
-    alert('Marque ou preencha pelo menos uma série antes de finalizar.');
+    alert('Marque pelo menos uma série antes de finalizar.');
     return;
   }
-
   if (!confirm('Finalizar este treino e salvar no histórico?')) return;
 
   const registro = {
@@ -389,11 +420,8 @@ async function finalizarTreino() {
 }
 
 function voltarDoTreino() {
-  const algoMarcado = session.exercicios.some(ex =>
-    ex.series.some(s => s.feito || s.reps !== null)
-  );
+  const algoMarcado = session.exercicios.some(ex => ex.series.some(s => s.feito));
   if (algoMarcado && !confirm('Sair sem finalizar? As marcações serão perdidas.')) return;
-
   session = null;
   showScreen('home');
 }
@@ -417,7 +445,6 @@ function renderHistory() {
     const d = new Date(reg.data);
     const dataFmt = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) +
       ' · ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
     const feitos = reg.exercicios.filter(ex => ex.series.some(s => s.feito)).length;
 
     const card = document.createElement('button');
@@ -439,27 +466,13 @@ function abrirInfoExercicio(exIdx) {
   if (!ex) return;
 
   document.getElementById('modal-info-title').textContent = ex.nome;
-
   const body = document.getElementById('modal-info-body');
   body.innerHTML = `
-    ${ex.imagem ? `<img src="${escape(ex.imagem)}" alt="${escape(ex.nome)}"
-                        style="width:100%;border-radius:12px;margin-bottom:14px;display:block;">` : ''}
-    ${ex.descricao ? `
-      <p style="font-size:.92rem;line-height:1.55;margin:0 0 14px;color:var(--text);white-space:pre-wrap;">
-        ${escape(ex.descricao)}
-      </p>
-    ` : ''}
-    ${ex.nota ? `
-      <div style="background:var(--surface-2);border-radius:10px;padding:12px 14px;font-size:.85rem;color:var(--text-muted);line-height:1.45;">
-        <strong style="color:var(--text);display:block;margin-bottom:4px;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;">Nota</strong>
-        ${escape(ex.nota)}
-      </div>
-    ` : ''}
-    ${!ex.imagem && !ex.descricao && !ex.nota
-      ? '<p style="color:var(--text-muted);text-align:center;padding:24px 0;">Nenhuma descrição cadastrada ainda.<br>Use o ✏️ no topo pra adicionar.</p>'
-      : ''}
+    ${ex.imagem ? `<img src="${escape(ex.imagem)}" alt="${escape(ex.nome)}" style="width:100%;border-radius:12px;margin-bottom:14px;display:block;">` : ''}
+    ${ex.descricao ? `<p style="font-size:.92rem;line-height:1.55;margin:0 0 14px;color:var(--text);white-space:pre-wrap;">${escape(ex.descricao)}</p>` : ''}
+    ${ex.nota ? `<div style="background:var(--surface-2);border-radius:10px;padding:12px 14px;font-size:.85rem;color:var(--text-muted);line-height:1.45;"><strong style="color:var(--text);display:block;margin-bottom:4px;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;">Nota</strong>${escape(ex.nota)}</div>` : ''}
+    ${!ex.imagem && !ex.descricao && !ex.nota ? '<p style="color:var(--text-muted);text-align:center;padding:24px 0;">Nenhuma descrição cadastrada ainda.<br>Use o ✏️ no topo pra adicionar.</p>' : ''}
   `;
-
   document.getElementById('modal-info').classList.add('active');
 }
 
@@ -467,7 +480,6 @@ function abrirDetalheHistorico(idx) {
   const reg = DATA.historico[idx];
   const d = new Date(reg.data);
   document.getElementById('modal-history-title').textContent = reg.treinoNome;
-
   const body = document.getElementById('modal-history-body');
   body.innerHTML = `
     <p style="color:var(--text-muted);font-size:.85rem;margin:0 0 12px;">
@@ -490,16 +502,22 @@ function abrirDetalheHistorico(idx) {
       `;
     }).join('')}
   `;
-
   document.getElementById('modal-history').classList.add('active');
 }
 
-// ===== MODAL EDITAR =====
-let editDraft = null;
+// ===== MODAL: CRIAR/EDITAR TREINO =====
+let editTreinoDraft = null;
 
-function abrirModalEditar() {
-  editDraft = JSON.parse(JSON.stringify(
-    DATA.treinos[session.treinoId].exercicios.map(ex => ({
+function abrirModalTreino(treinoId) {
+  const isNovo = !treinoId;
+  const t = isNovo ? null : DATA.treinos[treinoId];
+  const categoriaPadrao = DATA.categorias[0]?.id || 'musc';
+
+  editTreinoDraft = {
+    id: treinoId,
+    nome: t ? t.nome : '',
+    categoria: t ? t.categoria : categoriaPadrao,
+    exercicios: t ? JSON.parse(JSON.stringify(t.exercicios.map(ex => ({
       nome: ex.nome,
       series: ex.series,
       pesoSugerido: ex.pesoSugerido ?? null,
@@ -507,84 +525,190 @@ function abrirModalEditar() {
       nota: ex.nota || '',
       descricao: ex.descricao || '',
       imagem: ex.imagem || ''
-    }))
-  ));
+    })))) : [
+      { nome: '', series: 3, pesoSugerido: null, unidade: 'reps', nota: '', descricao: '', imagem: '' }
+    ]
+  };
 
-  document.getElementById('modal-edit-title').textContent =
-    'Editar: ' + DATA.treinos[session.treinoId].nome;
-  renderEditBody();
+  document.getElementById('modal-edit-title').textContent = isNovo ? 'Novo treino' : 'Editar treino';
+  renderTreinoBody();
   document.getElementById('modal-edit').classList.add('active');
 }
 
-function renderEditBody() {
+function renderTreinoBody() {
   const body = document.getElementById('modal-edit-body');
-  body.innerHTML = editDraft.map((ex, i) => `
-    <div class="edit-ex" data-idx="${i}">
-      <input type="text" class="edit-nome" value="${escape(ex.nome)}" placeholder="Nome do exercício">
-      <button class="btn-remove" data-idx="${i}" aria-label="Remover">×</button>
-      <div class="row-2">
-        <input type="number" class="edit-series" min="1" value="${ex.series}" placeholder="Séries">
-        <input type="number" class="edit-peso" step="0.5" min="0"
-               value="${ex.pesoSugerido ?? ''}" placeholder="Peso kg">
-      </div>
-      <input type="text" class="edit-imagem" value="${escape(ex.imagem)}"
-             placeholder="URL da imagem (opcional)">
-      <textarea class="edit-descricao" placeholder="Descrição do exercício (opcional)">${escape(ex.descricao)}</textarea>
-    </div>
-  `).join('');
+  const catOptions = DATA.categorias.map(c =>
+    `<option value="${escape(c.id)}" ${c.id === editTreinoDraft.categoria ? 'selected' : ''}>${escape(c.nome)}</option>`
+  ).join('');
 
-  body.querySelectorAll('.btn-remove').forEach(b => {
+  body.innerHTML = `
+    <div class="edit-treino-header">
+      <div>
+        <label>Nome do treino</label>
+        <input type="text" id="edit-treino-nome" value="${escape(editTreinoDraft.nome)}" placeholder="Ex: A — Pernas">
+      </div>
+      <div>
+        <label>Categoria</label>
+        <select id="edit-treino-categoria">${catOptions}</select>
+      </div>
+    </div>
+    <div id="edit-ex-list">
+      ${editTreinoDraft.exercicios.map((ex, i) => `
+        <div class="edit-ex" data-idx="${i}">
+          <input type="text" class="edit-nome" value="${escape(ex.nome)}" placeholder="Nome do exercício">
+          <button class="btn-remove" data-idx="${i}" aria-label="Remover">×</button>
+          <div class="row-2">
+            <input type="number" class="edit-series" min="1" value="${ex.series}" placeholder="Séries">
+            <input type="number" class="edit-peso" step="0.5" min="0" value="${ex.pesoSugerido ?? ''}" placeholder="Peso kg">
+          </div>
+          <input type="text" class="edit-imagem" value="${escape(ex.imagem)}" placeholder="URL da imagem (opcional)">
+          <textarea class="edit-descricao" placeholder="Descrição do exercício (opcional)">${escape(ex.descricao)}</textarea>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  body.querySelector('#edit-treino-nome').oninput = e => editTreinoDraft.nome = e.target.value;
+  body.querySelector('#edit-treino-categoria').onchange = e => editTreinoDraft.categoria = e.target.value;
+
+  body.querySelectorAll('#edit-ex-list .btn-remove').forEach(b => {
     b.onclick = () => {
-      editDraft.splice(+b.dataset.idx, 1);
-      renderEditBody();
+      editTreinoDraft.exercicios.splice(+b.dataset.idx, 1);
+      renderTreinoBody();
     };
   });
 
-  body.querySelectorAll('.edit-ex').forEach(row => {
+  body.querySelectorAll('#edit-ex-list .edit-ex').forEach(row => {
     const idx = +row.dataset.idx;
-    row.querySelector('.edit-nome').oninput = e => editDraft[idx].nome = e.target.value;
+    row.querySelector('.edit-nome').oninput = e => editTreinoDraft.exercicios[idx].nome = e.target.value;
     row.querySelector('.edit-series').oninput = e =>
-      editDraft[idx].series = Math.max(1, +e.target.value || 1);
+      editTreinoDraft.exercicios[idx].series = Math.max(1, +e.target.value || 1);
     row.querySelector('.edit-peso').oninput = e =>
-      editDraft[idx].pesoSugerido = e.target.value === '' ? null : Number(e.target.value);
+      editTreinoDraft.exercicios[idx].pesoSugerido = e.target.value === '' ? null : Number(e.target.value);
     row.querySelector('.edit-imagem').oninput = e =>
-      editDraft[idx].imagem = e.target.value.trim();
+      editTreinoDraft.exercicios[idx].imagem = e.target.value.trim();
     row.querySelector('.edit-descricao').oninput = e =>
-      editDraft[idx].descricao = e.target.value;
+      editTreinoDraft.exercicios[idx].descricao = e.target.value;
   });
 }
 
 function adicionarExercicioNoModal() {
-  editDraft.push({ nome: '', series: 3, pesoSugerido: null, unidade: 'reps', nota: '' });
-  renderEditBody();
-  const inputs = document.querySelectorAll('#modal-edit-body .edit-nome');
+  editTreinoDraft.exercicios.push({
+    nome: '', series: 3, pesoSugerido: null, unidade: 'reps', nota: '', descricao: '', imagem: ''
+  });
+  renderTreinoBody();
+  const inputs = document.querySelectorAll('#edit-ex-list .edit-nome');
   inputs[inputs.length - 1]?.focus();
 }
 
-async function salvarEdicao() {
-  editDraft = editDraft.filter(ex => ex.nome.trim() !== '');
-  if (editDraft.length === 0) {
-    alert('Adicione pelo menos um exercício.');
-    return;
-  }
+async function salvarTreino() {
+  const nome = editTreinoDraft.nome.trim();
+  if (!nome) { alert('Dê um nome ao treino.'); return; }
 
-  const treino = DATA.treinos[session.treinoId];
-  treino.exercicios = editDraft.map(ex => ({
-    nome: ex.nome.trim(),
-    series: Math.max(1, ex.series),
-    pesoSugerido: ex.pesoSugerido,
-    unidade: ex.unidade,
-    nota: ex.nota || undefined,
-    descricao: ex.descricao || undefined,
-    imagem: ex.imagem || undefined
-  }));
+  const exercicios = editTreinoDraft.exercicios
+    .filter(ex => ex.nome.trim() !== '')
+    .map(ex => ({
+      nome: ex.nome.trim(),
+      series: Math.max(1, ex.series),
+      pesoSugerido: ex.pesoSugerido,
+      unidade: ex.unidade,
+      nota: ex.nota || undefined,
+      descricao: ex.descricao || undefined,
+      imagem: ex.imagem || undefined
+    }));
+
+  if (exercicios.length === 0) { alert('Adicione pelo menos um exercício.'); return; }
+
+  const eraAtual = session && session.treinoId === editTreinoDraft.id;
+  let idFinal;
+
+  if (editTreinoDraft.id) {
+    idFinal = editTreinoDraft.id;
+    DATA.treinos[idFinal] = {
+      ...DATA.treinos[idFinal],
+      nome,
+      categoria: editTreinoDraft.categoria,
+      exercicios
+    };
+  } else {
+    idFinal = genId('treino');
+    DATA.treinos[idFinal] = { nome, categoria: editTreinoDraft.categoria, exercicios };
+  }
 
   await saveData(DATA);
   fecharModal('modal-edit');
 
-  const idAtual = session.treinoId;
-  session = null;
-  iniciarTreino(idAtual);
+  if (eraAtual) {
+    session = null;
+    iniciarTreino(idFinal);
+  }
+
+  renderHome();
+  renderHistory();
+}
+
+// ===== MODAL: CATEGORIAS =====
+let catDraft = null;
+
+function abrirModalCategorias() {
+  catDraft = DATA.categorias.map(c => ({ id: c.id, nome: c.nome }));
+  renderCategoriasBody();
+  document.getElementById('modal-categorias').classList.add('active');
+}
+
+function renderCategoriasBody() {
+  const body = document.getElementById('modal-cat-body');
+  body.innerHTML = `
+    ${catDraft.map((c, i) => {
+      const nTreinos = Object.values(DATA.treinos).filter(t => t.categoria === c.id).length;
+      return `
+        <div class="cat-row">
+          <input type="text" class="cat-nome" data-idx="${i}" value="${escape(c.nome)}" placeholder="Nome da categoria">
+          <button class="btn-remove" data-idx="${i}" aria-label="Remover categoria">×</button>
+        </div>
+        <p style="font-size:.75rem;color:var(--text-muted);margin:-6px 0 12px 4px;">
+          ${nTreinos} treino${nTreinos === 1 ? '' : 's'} nesta categoria
+        </p>
+      `;
+    }).join('')}
+    ${catDraft.length === 0 ? '<p style="color:var(--text-muted);font-size:.9rem;">Nenhuma categoria. Adicione uma abaixo.</p>' : ''}
+  `;
+
+  body.querySelectorAll('.cat-nome').forEach(inp => {
+    inp.oninput = e => catDraft[+inp.dataset.idx].nome = e.target.value;
+  });
+
+  body.querySelectorAll('.btn-remove').forEach(b => {
+    b.onclick = () => {
+      const idx = +b.dataset.idx;
+      const cat = catDraft[idx];
+      const nTreinos = Object.values(DATA.treinos).filter(t => t.categoria === cat.id).length;
+      if (nTreinos > 0) {
+        alert(`Não é possível excluir "${cat.nome}": tem ${nTreinos} treino(s) nela. Mova ou exclua os treinos antes.`);
+        return;
+      }
+      catDraft.splice(idx, 1);
+      renderCategoriasBody();
+    };
+  });
+}
+
+function adicionarCategoriaNoModal() {
+  catDraft.push({ id: genId('cat'), nome: 'Nova categoria' });
+  renderCategoriasBody();
+  const inputs = document.querySelectorAll('#modal-cat-body .cat-nome');
+  const last = inputs[inputs.length - 1];
+  last?.focus();
+  last?.select();
+}
+
+async function salvarCategorias() {
+  const validas = catDraft.filter(c => c.nome.trim() !== '');
+  if (validas.length === 0) { alert('Adicione pelo menos uma categoria.'); return; }
+  DATA.categorias = validas.map(c => ({ id: c.id, nome: c.nome.trim() }));
+  await saveData(DATA);
+  fecharModal('modal-categorias');
+  renderHome();
 }
 
 function fecharModal(id) {
