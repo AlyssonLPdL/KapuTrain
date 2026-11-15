@@ -814,3 +814,51 @@ body.workout-active .bottom-nav { display: none; }
   margin-bottom: 14px;
   line-height: 1.4;
 }
+
+/* ===== FOOTER GLOBAL ===== */
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 60; /* acima do bottom-nav (50), abaixo dos modais (100) */
+  background: rgba(10, 10, 15, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  padding: 6px 12px calc(6px + env(safe-area-inset-bottom, 0));
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.3;
+  pointer-events: none;
+}
+.app-footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+  pointer-events: auto;
+}
+.app-footer a:active { color: var(--text); }
+
+/* Empurra o bottom-nav pra cima do footer */
+.bottom-nav {
+  bottom: calc(28px + env(safe-area-inset-bottom, 0));
+}
+
+/* Empurra os modais pra cima do footer */
+.modal-overlay {
+  padding-bottom: calc(28px + env(safe-area-inset-bottom, 0));
+}
+
+/* Empurra o conteúdo das telas pra cima do footer + nav */
+.screen {
+  padding-bottom: calc(76px + 28px + var(--safe-bot) + 20px);
+}
+
+/* No workout a bottom-nav some, mas o footer fica. Ajusta só ele. */
+body.workout-active .screen {
+  padding-bottom: calc(28px + var(--safe-bot) + 20px);
+}
+body.workout-active .workout-footer {
+  padding-bottom: calc(12px + 28px + var(--safe-bot) + 8px);
+}
