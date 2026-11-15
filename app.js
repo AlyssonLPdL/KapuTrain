@@ -42,8 +42,10 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
 // ===== INIT =====
 async function init() {
   DATA = await loadData();
-  renderHome();
-  renderHistory();
+
+  // Renderiza cada tela isoladamente — se uma quebrar, as outras continuam
+  try { renderHome(); } catch (e) { console.error('renderHome falhou:', e); }
+  try { renderHistory(); } catch (e) { console.error('renderHistory falhou:', e); }
 
   document.getElementById('btn-voltar').addEventListener('click', voltarDoTreino);
   document.getElementById('btn-editar').addEventListener('click', () => {
@@ -430,6 +432,10 @@ function voltarDoTreino() {
 function renderHistory() {
   const list = document.getElementById('history-list');
   const sub = document.getElementById('history-sub');
+  if (!list || !sub) {
+    console.error('renderHistory: elementos não encontrados');
+    return;
+  }
   list.innerHTML = '';
 
   const hist = Array.isArray(DATA.historico) ? DATA.historico : [];
