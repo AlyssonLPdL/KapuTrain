@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>FitTrack</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen active">
+    <header class="app-header">
+      <div>
+        <h1>Treinos</h1>
+        <p class="header-sub" id="hoje-text">Hoje</p>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <button class="hero-card" id="hero-card">
+        <div class="hero-top">
+          <span class="badge">PRÓXIMO</span>
+        </div>
+        <h2 id="hero-nome">—</h2>
+        <p id="hero-info">—</p>
+        <span class="hero-cta">Iniciar treino →</span>
+      </button>
+
+      <section class="section">
+        <h2 class="section-title">Musculação</h2>
+        <div class="treinos-grid" id="grid-musc"></div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Isometria</h2>
+        <div class="treinos-grid" id="grid-iso"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- WORKOUT -->
+  <div id="screen-workout" class="screen">
+    <header class="app-header workout-header">
+      <button class="btn-icon" id="btn-voltar" aria-label="Voltar">←</button>
+      <div class="workout-title-wrap">
+        <h1 id="workout-title">—</h1>
+        <p class="header-sub" id="workout-progress">—</p>
+      </div>
+      <button class="btn-icon" id="btn-editar" aria-label="Editar">✏️</button>
+    </header>
+
+    <main class="workout-main">
+      <div class="carousel" id="carousel"></div>
+      <div class="dots" id="dots"></div>
+    </main>
+
+    <footer class="workout-footer">
+      <button class="btn-primary" id="btn-finalizar">Finalizar treino</button>
+    </footer>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="screen-history" class="screen">
+    <header class="app-header">
+      <div>
+        <h1>Histórico</h1>
+        <p class="header-sub" id="history-sub">—</p>
+      </div>
+    </header>
+    <main class="app-main" id="history-list"></main>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <button class="nav-btn active" data-screen="home">
+      <span class="nav-icon">🏋️</span>
+      <span>Treinos</span>
+    </button>
+    <button class="nav-btn" data-screen="history">
+      <span class="nav-icon">📊</span>
+      <span>Histórico</span>
+    </button>
+  </nav>
+
+  <!-- MODAL: editar treino -->
+  <div class="modal-overlay" id="modal-edit">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-edit-title">Editar treino</h2>
+        <button class="btn-icon" id="modal-edit-close">✕</button>
+      </div>
+      <div class="modal-body" id="modal-edit-body"></div>
+      <div class="modal-footer">
+        <button class="btn-ghost" id="btn-add-ex">+ Exercício</button>
+        <button class="btn-primary btn-sm" id="btn-save-edit">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: detalhe do histórico -->
+  <div class="modal-overlay" id="modal-history">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-history-title">Detalhes</h2>
+        <button class="btn-icon" id="modal-history-close">✕</button>
+      </div>
+      <div class="modal-body" id="modal-history-body"></div>
+    </div>
+  </div>
+
+  <script src="storage.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
