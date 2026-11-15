@@ -176,7 +176,6 @@ input, select { font-family: inherit; }
   padding: 8px 8px calc(8px + var(--safe-bot));
   z-index: 50;
 }
-.screen:not(.active) ~ .bottom-nav,
 body.workout-active .bottom-nav { display: none; }
 
 .nav-btn {
