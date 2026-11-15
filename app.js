@@ -432,7 +432,9 @@ function renderHistory() {
   const sub = document.getElementById('history-sub');
   list.innerHTML = '';
 
-  const total = DATA.historico.length;
+  const hist = Array.isArray(DATA.historico) ? DATA.historico : [];
+  const total = hist.length;
+
   sub.textContent = total === 0 ? 'Nenhum treino ainda'
     : `${total} treino${total > 1 ? 's' : ''} registrado${total > 1 ? 's' : ''}`;
 
@@ -441,20 +443,22 @@ function renderHistory() {
     return;
   }
 
-  DATA.historico.forEach((reg, idx) => {
+  hist.forEach((reg, idx) => {
     const d = new Date(reg.data);
     const dataFmt = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) +
       ' · ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    const feitos = reg.exercicios.filter(ex => ex.series.some(s => s.feito)).length;
+
+    const exs = Array.isArray(reg.exercicios) ? reg.exercicios : [];
+    const feitos = exs.filter(ex => Array.isArray(ex.series) && ex.series.some(s => s.feito)).length;
 
     const card = document.createElement('button');
     card.className = 'hist-card';
     card.innerHTML = `
       <div class="hist-top">
-        <span class="hist-treino">${escape(reg.treinoNome)}</span>
+        <span class="hist-treino">${escape(reg.treinoNome || 'Treino')}</span>
         <span class="hist-date">${dataFmt}</span>
       </div>
-      <p class="hist-summary">${feitos} de ${reg.exercicios.length} exercícios concluídos</p>
+      <p class="hist-summary">${feitos} de ${exs.length} exercícios concluídos</p>
     `;
     card.onclick = () => abrirDetalheHistorico(idx);
     list.appendChild(card);
@@ -477,22 +481,28 @@ function abrirInfoExercicio(exIdx) {
 }
 
 function abrirDetalheHistorico(idx) {
-  const reg = DATA.historico[idx];
+  const hist = Array.isArray(DATA.historico) ? DATA.historico : [];
+  const reg = hist[idx];
+  if (!reg) return;
+
   const d = new Date(reg.data);
-  document.getElementById('modal-history-title').textContent = reg.treinoNome;
+  document.getElementById('modal-history-title').textContent = reg.treinoNome || 'Treino';
+
+  const exs = Array.isArray(reg.exercicios) ? reg.exercicios : [];
   const body = document.getElementById('modal-history-body');
   body.innerHTML = `
     <p style="color:var(--text-muted);font-size:.85rem;margin:0 0 12px;">
       ${d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
       às ${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
     </p>
-    ${reg.exercicios.map(ex => {
-      const feitas = ex.series.filter(s => s.feito);
+    ${exs.map(ex => {
+      const series = Array.isArray(ex.series) ? ex.series : [];
+      const feitas = series.filter(s => s.feito);
       if (feitas.length === 0) return '';
       const isIso = ex.unidade === 'seg';
       return `
         <div class="hist-detail-ex">
-          <strong>${escape(ex.nome)}</strong>
+          <strong>${escape(ex.nome || 'Exercício')}</strong>
           ${feitas.map((s, i) => {
             const range = s.range || (s.reps != null ? `${s.reps}` : '-');
             const peso = (!isIso && s.peso != null) ? ` · ${s.peso}kg` : '';
@@ -502,6 +512,7 @@ function abrirDetalheHistorico(idx) {
       `;
     }).join('')}
   `;
+
   document.getElementById('modal-history').classList.add('active');
 }
 

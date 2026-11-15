@@ -8,7 +8,16 @@ async function loadData() {
     await saveData(d);
     return d;
   }
-  return migrate(JSON.parse(raw));
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (e) {
+    // JSON corrompido → recria do zero
+    const d = defaultData();
+    await saveData(d);
+    return d;
+  }
+  return migrate(parsed);
 }
 
 async function saveData(data) {
@@ -24,6 +33,17 @@ async function appendHistorico(registro) {
 
 function migrate(data) {
   let changed = false;
+
+  if (!data || typeof data !== 'object') {
+    data = defaultData();
+    changed = true;
+  }
+
+  if (!data.treinos || typeof data.treinos !== 'object') {
+    data.treinos = {};
+    changed = true;
+  }
+
   if (!Array.isArray(data.categorias)) {
     data.categorias = [
       { id: 'musc', nome: 'Musculação' },
@@ -31,12 +51,23 @@ function migrate(data) {
     ];
     changed = true;
   }
+
+  if (!Array.isArray(data.historico)) {
+    data.historico = [];
+    changed = true;
+  }
+
   Object.entries(data.treinos).forEach(([id, t]) => {
     if (!t.categoria) {
       t.categoria = id.startsWith('iso') ? 'iso' : 'musc';
       changed = true;
     }
+    if (!Array.isArray(t.exercicios)) {
+      t.exercicios = [];
+      changed = true;
+    }
   });
+
   if (changed) saveData(data);
   return data;
 }
