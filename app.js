@@ -579,52 +579,135 @@ function renderEditExRow(ex, i) {
   `;
 }
 
-// Drag reorder com Pointer Events (funciona no touch)
+// Drag reorder com Pointer Events — o item segue o dedo, os outros deslizam
 function enableDragReorder(listEl, onEnd) {
   let dragEl = null;
   let pointerId = null;
+  let startY = 0;
+  let dy = 0;
+  let initialOrder = [];
+  let initialTops = [];
+  let dragHeight = 0;
+  let gap = 0;
+  let dragOriginalIdx = -1;
+  let targetIdx = -1;
+
+  const getRows = () => [...listEl.querySelectorAll("[data-idx]")];
 
   const onDown = (e) => {
+    if (dragEl) return;
     const handle = e.target.closest(".drag-handle");
     if (!handle || !listEl.contains(handle)) return;
     const row = handle.closest("[data-idx]");
     if (!row) return;
+
     dragEl = row;
     pointerId = e.pointerId;
-    row.classList.add("dragging");
-    try { listEl.setPointerCapture(e.pointerId); } catch {}
+    startY = e.clientY;
+    dy = 0;
+
+    initialOrder = getRows();
+    const rects = initialOrder.map((r) => r.getBoundingClientRect());
+    initialTops = rects.map((r) => r.top);
+    dragOriginalIdx = initialOrder.indexOf(dragEl);
+    dragHeight = rects[dragOriginalIdx].height;
+    gap =
+      rects.length > 1
+        ? Math.max(0, rects[1].top - rects[0].top - rects[0].height)
+        : 0;
+    targetIdx = dragOriginalIdx;
+
+    // O elemento arrastado: sem transição (precisa seguir o dedo 1:1)
+    dragEl.style.transition = "none";
+    dragEl.style.zIndex = "10";
+    dragEl.style.position = "relative";
+    dragEl.style.willChange = "transform";
+    dragEl.classList.add("dragging");
+
+    // Os outros: transição pra deslizar quando mudam de posição
+    initialOrder.forEach((r) => {
+      if (r === dragEl) return;
+      r.style.transition = "transform 220ms cubic-bezier(.2,.7,.2,1)";
+      r.style.willChange = "transform";
+    });
+
+    try {
+      listEl.setPointerCapture(e.pointerId);
+    } catch {}
     e.preventDefault();
   };
 
   const onMove = (e) => {
     if (!dragEl || e.pointerId !== pointerId) return;
     e.preventDefault();
-    const y = e.clientY;
-    const rows = [...listEl.querySelectorAll("[data-idx]")].filter((r) => r !== dragEl);
-    let inserted = false;
-    for (const r of rows) {
-      const rect = r.getBoundingClientRect();
-      if (y < rect.top + rect.height / 2) {
-        listEl.insertBefore(dragEl, r);
-        inserted = true;
-        break;
-      }
+
+    dy = e.clientY - startY;
+    dragEl.style.transform = `translateY(${dy}px) scale(1.02)`;
+
+    // Onde o centro do item arrastado está agora (visualmente)?
+    const dragCenter = initialTops[dragOriginalIdx] + dragHeight / 2 + dy;
+
+    // Em que posição ele seria inserido (entre os "outros")?
+    let newTarget = 0;
+    for (let i = 0; i < initialOrder.length; i++) {
+      if (initialOrder[i] === dragEl) continue;
+      const slotCenter = initialTops[i] + dragHeight / 2;
+      if (dragCenter < slotCenter) break;
+      newTarget++;
     }
-    if (!inserted) listEl.appendChild(dragEl);
+
+    if (newTarget === targetIdx) return;
+    targetIdx = newTarget;
+
+    // Empurra os outros pra abrir/fechar o "buraco"
+    const shift = dragHeight + gap;
+    initialOrder.forEach((row, idx) => {
+      if (row === dragEl) return;
+      const otherIdx = idx < dragOriginalIdx ? idx : idx - 1;
+      const finalIdx = otherIdx >= targetIdx ? otherIdx + 1 : otherIdx;
+      const delta = (finalIdx - idx) * shift;
+      row.style.transform = delta === 0 ? "" : `translateY(${delta}px)`;
+    });
   };
 
-  const onUp = () => {
+  const finishDrag = () => {
     if (!dragEl) return;
+
+    // Reconstrói a ordem final
+    const others = initialOrder.filter((r) => r !== dragEl);
+    const finalOrder = [
+      ...others.slice(0, targetIdx),
+      dragEl,
+      ...others.slice(targetIdx),
+    ];
+
+    // Limpa estilos inline
+    initialOrder.forEach((r) => {
+      r.style.transition = "";
+      r.style.transform = "";
+      r.style.willChange = "";
+    });
+    dragEl.style.transform = "";
+    dragEl.style.zIndex = "";
+    dragEl.style.position = "";
+    dragEl.style.willChange = "";
     dragEl.classList.remove("dragging");
+
+    // Reordena o DOM (o onEnd re-renderiza logo em seguida)
+    finalOrder.forEach((r) => listEl.appendChild(r));
+
     dragEl = null;
     pointerId = null;
+    targetIdx = -1;
+    dragOriginalIdx = -1;
+
     onEnd && onEnd();
   };
 
   listEl.addEventListener("pointerdown", onDown);
   listEl.addEventListener("pointermove", onMove);
-  listEl.addEventListener("pointerup", onUp);
-  listEl.addEventListener("pointercancel", onUp);
+  listEl.addEventListener("pointerup", finishDrag);
+  listEl.addEventListener("pointercancel", finishDrag);
 }
 
 // ===== PICKER (biblioteca) =====

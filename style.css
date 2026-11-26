@@ -614,6 +614,8 @@ body.workout-active .bottom-nav { display: none; }
   display: flex;
   flex-direction: column;
   gap: 8px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .edit-ex-row {
   display: grid;
@@ -623,12 +625,18 @@ body.workout-active .bottom-nav { display: none; }
   background: var(--surface-2);
   border-radius: 12px;
   padding: 10px;
-  transition: opacity .15s, background .15s;
+  position: relative;
+  transition: background .15s, box-shadow .15s;
 }
 .edit-ex-row.dragging {
-  opacity: 0.6;
-  background: var(--bg);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  background: var(--surface);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.55),
+    0 0 0 1.5px var(--primary);
+  cursor: grabbing;
+}
+.edit-ex-row.dragging .drag-handle {
+  color: var(--primary-hover);
 }
 .drag-handle {
   height: 32px;
