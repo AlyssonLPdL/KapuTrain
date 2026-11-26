@@ -15,23 +15,12 @@
   <div id="screen-home" class="screen active">
     <header class="app-header">
       <div>
-        <h1>Treinos</h1>
+        <h1>Meus Treinos</h1>
         <p class="header-sub" id="hoje-text">Hoje</p>
       </div>
-      <button class="btn-icon" id="btn-categorias" aria-label="Gerenciar categorias" style="margin-left:auto;">⚙️</button>
     </header>
-
-    <main class="app-main">
-      <button class="hero-card" id="hero-card">
-        <div class="hero-top">
-          <span class="badge">PRÓXIMO</span>
-        </div>
-        <h2 id="hero-nome">—</h2>
-        <p id="hero-info">—</p>
-        <span class="hero-cta">Iniciar treino →</span>
-      </button>
-
-      <button class="btn-primary" id="btn-novo-treino" style="margin-top:20px;">+ Novo treino</button>
+    <main class="app-main" id="home-list">
+      <button class="btn-primary" id="btn-novo-treino">+ Novo treino</button>
     </main>
   </div>
 
@@ -45,12 +34,10 @@
       </div>
       <button class="btn-icon" id="btn-editar" aria-label="Editar">✏️</button>
     </header>
-
     <main class="workout-main">
       <div class="carousel" id="carousel"></div>
       <div class="dots" id="dots"></div>
     </main>
-
     <footer class="workout-footer">
       <button class="btn-primary" id="btn-finalizar">Finalizar treino</button>
     </footer>
@@ -70,26 +57,43 @@
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav" id="bottom-nav">
     <button class="nav-btn active" data-screen="home">
-      <span class="nav-icon">🏋️</span>
-      <span>Treinos</span>
+      <span class="nav-icon">🏋️</span><span>Treinos</span>
     </button>
     <button class="nav-btn" data-screen="history">
-      <span class="nav-icon">📊</span>
-      <span>Histórico</span>
+      <span class="nav-icon">📊</span><span>Histórico</span>
     </button>
   </nav>
 
-  <!-- MODAL: editar/criar treino -->
+  <!-- MODAL: criar/editar treino -->
   <div class="modal-overlay" id="modal-edit">
     <div class="modal">
       <div class="modal-header">
-        <h2 id="modal-edit-title">Editar treino</h2>
+        <h2 id="modal-edit-title">Novo treino</h2>
         <button class="btn-icon" id="modal-edit-close">✕</button>
       </div>
       <div class="modal-body" id="modal-edit-body"></div>
       <div class="modal-footer">
-        <button class="btn-ghost" id="btn-add-ex">+ Exercício</button>
+        <button class="btn-ghost" id="btn-add-ex-lib">+ Adicionar exercício</button>
         <button class="btn-primary btn-sm" id="btn-save-edit">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: biblioteca de exercícios (picker) -->
+  <div class="modal-overlay" id="modal-picker">
+    <div class="modal modal-full">
+      <div class="modal-header">
+        <h2>Biblioteca</h2>
+        <button class="btn-icon" id="modal-picker-close">✕</button>
+      </div>
+      <div class="picker-toolbar">
+        <input type="search" id="picker-search" placeholder="Buscar exercício...">
+        <div class="picker-tabs" id="picker-tabs"></div>
+      </div>
+      <div class="modal-body picker-body" id="picker-list"></div>
+      <div class="modal-footer">
+        <span class="picker-count" id="picker-count">0 selecionado(s)</span>
+        <button class="btn-primary btn-sm" id="btn-picker-confirm">Confirmar</button>
       </div>
     </div>
   </div>
@@ -116,33 +120,16 @@
     </div>
   </div>
 
-  <!-- MODAL: categorias -->
-  <div class="modal-overlay" id="modal-categorias">
-    <div class="modal">
-      <div class="modal-header">
-        <h2>Categorias</h2>
-        <button class="btn-icon" id="modal-cat-close">✕</button>
-      </div>
-      <div class="modal-body" id="modal-cat-body"></div>
-      <div class="modal-footer">
-        <button class="btn-ghost" id="btn-add-cat">+ Categoria</button>
-        <button class="btn-primary btn-sm" id="btn-save-cat">Salvar</button>
-      </div>
-    </div>
-  </div>
-
-    <!-- TIMER OVERLAY (série + descanso) -->
+  <!-- TIMER OVERLAY (série + descanso) -->
   <div class="timer-overlay" id="timer-overlay" role="dialog" aria-modal="true">
     <button class="timer-cancel" id="timer-cancel" aria-label="Cancelar">✕</button>
 
-    <!-- Etapa 1: prep de 10s -->
     <div class="timer-stage" id="timer-stage-prep">
       <p class="timer-kicker">PREPARE-SE</p>
       <div class="timer-big" id="timer-prep-num">10</div>
       <p class="timer-hint">Série em execução</p>
     </div>
 
-    <!-- Etapa 2: escolher descanso -->
     <div class="timer-stage" id="timer-stage-options" style="display:none">
       <p class="timer-kicker">DESCANSO</p>
       <h2 class="timer-title">Quanto tempo?</h2>
@@ -154,7 +141,6 @@
       <button class="timer-link" id="timer-skip-options">Pular descanso</button>
     </div>
 
-    <!-- Etapa 3: descanso correndo -->
     <div class="timer-stage" id="timer-stage-rest" style="display:none">
       <p class="timer-kicker">DESCANSO</p>
       <div class="timer-big" id="timer-rest-num">1:00</div>
@@ -162,26 +148,26 @@
     </div>
   </div>
 
-  <!-- FOOTER GLOBAL -->
-<footer class="app-footer">
-  <span>Feito por Alysson · </span>
-  <a href="mailto:alyssonlpdl@outlook.com">alyssonlpdl@outlook.com</a>
-</footer>
+  <footer class="app-footer">
+    <span>Feito por Alysson · </span>
+    <a href="mailto:alysonlpdl@outlook.com">alysonlpdl@outlook.com</a>
+  </footer>
 
   <div id="error-box" style="display:none;position:fixed;top:0;left:0;right:0;background:#b91c1c;color:#fff;padding:10px;font-size:12px;z-index:9999;max-height:40vh;overflow:auto;white-space:pre-wrap;"></div>
-<script>
-  window.addEventListener('error', e => {
-    const box = document.getElementById('error-box');
-    box.style.display = 'block';
-    box.textContent += '⚠ ' + e.message + '\n' + (e.filename || '') + ':' + (e.lineno || '') + '\n\n';
-  });
-  window.addEventListener('unhandledrejection', e => {
-    const box = document.getElementById('error-box');
-    box.style.display = 'block';
-    box.textContent += '⚠ Promise: ' + (e.reason?.message || e.reason) + '\n\n';
-  });
-</script>
+  <script>
+    window.addEventListener('error', e => {
+      const box = document.getElementById('error-box');
+      box.style.display = 'block';
+      box.textContent += '⚠ ' + e.message + '\n' + (e.filename || '') + ':' + (e.lineno || '') + '\n\n';
+    });
+    window.addEventListener('unhandledrejection', e => {
+      const box = document.getElementById('error-box');
+      box.style.display = 'block';
+      box.textContent += '⚠ Promise: ' + (e.reason?.message || e.reason) + '\n\n';
+    });
+  </script>
 
+  <script src="exercises-data.js"></script>
   <script src="storage.js"></script>
   <script src="app.js"></script>
 </body>
