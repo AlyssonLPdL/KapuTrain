@@ -2,44 +2,49 @@
 let DATA = null;
 let session = null;
 
-const ROTACAO = ['pernas', 'isoA', 'peito', 'isoB', 'costas', 'isoC'];
-const RANGES_REPS = ['4-6', '6-8', '8-10', '10-12'];
-const RANGES_SEG  = ['15-20s', '20-25s', '25-30s', '30-40s'];
+const ROTACAO = ["pernas", "isoA", "peito", "isoB", "costas", "isoC"];
+const RANGES_REPS = ["4-6", "6-8", "8-10", "10-12"];
+const RANGES_SEG = ["15-20s", "20-25s", "25-30s", "30-40s"];
 
 function getRanges(ex) {
-  return ex.unidade === 'seg' ? RANGES_SEG : RANGES_REPS;
+  return ex.unidade === "seg" ? RANGES_SEG : RANGES_REPS;
 }
 
 const screens = {
-  home: document.getElementById('screen-home'),
-  workout: document.getElementById('screen-workout'),
-  history: document.getElementById('screen-history')
+  home: document.getElementById("screen-home"),
+  workout: document.getElementById("screen-workout"),
+  history: document.getElementById("screen-history"),
 };
 
 // ===== NAVEGAÇÃO =====
 function showScreen(name) {
-  Object.values(screens).forEach(s => s.classList.remove('active'));
-  screens[name].classList.add('active');
-  document.body.classList.toggle('workout-active', name === 'workout');
-  document.getElementById('bottom-nav').style.display = name === 'workout' ? 'none' : 'flex';
+  Object.values(screens).forEach((s) => s.classList.remove("active"));
+  screens[name].classList.add("active");
+  document.body.classList.toggle("workout-active", name === "workout");
+  document.getElementById("bottom-nav").style.display =
+    name === "workout" ? "none" : "flex";
 
-  document.querySelectorAll('.nav-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.screen === name);
+  document.querySelectorAll(".nav-btn").forEach((b) => {
+    b.classList.toggle("active", b.dataset.screen === name);
   });
 
-  if (name === 'history') {
-    try { renderHistory(); } catch (e) { console.error(e); }
+  if (name === "history") {
+    try {
+      renderHistory();
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   window.scrollTo(0, 0);
 }
 
-document.querySelectorAll('.nav-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
+document.querySelectorAll(".nav-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
     const target = btn.dataset.screen;
     showScreen(target);
-    if (target === 'history') renderHistory();
-    if (target === 'home') renderHome();
+    if (target === "history") renderHistory();
+    if (target === "home") renderHome();
   });
 });
 
@@ -48,60 +53,113 @@ async function init() {
   DATA = await loadData();
 
   // Renderização isolada: se um quebrar, o outro continua
-  try { renderHome(); } catch (e) {
-    console.error('renderHome falhou:', e);
-    mostrarErroBoot('renderHome: ' + e.message);
+  try {
+    renderHome();
+  } catch (e) {
+    console.error("renderHome falhou:", e);
+    mostrarErroBoot("renderHome: " + e.message);
   }
 
-  try { renderHistory(); } catch (e) {
-    console.error('renderHistory falhou:', e);
-    mostrarErroBoot('renderHistory: ' + e.message);
+  try {
+    renderHistory();
+  } catch (e) {
+    console.error("renderHistory falhou:", e);
+    mostrarErroBoot("renderHistory: " + e.message);
   }
 
   // Reforço: garante renderHistory após o DOM estabilizar
   setTimeout(() => {
-    try { renderHistory(); } catch (e) { console.error(e); }
+    try {
+      renderHistory();
+    } catch (e) {
+      console.error(e);
+    }
   }, 50);
 
   // listeners...
-  document.getElementById('btn-voltar').addEventListener('click', voltarDoTreino);
-  document.getElementById('btn-editar').addEventListener('click', () => {
+  document
+    .getElementById("btn-voltar")
+    .addEventListener("click", voltarDoTreino);
+  document.getElementById("btn-editar").addEventListener("click", () => {
     if (session) abrirModalTreino(session.treinoId);
   });
-  document.getElementById('btn-finalizar').addEventListener('click', finalizarTreino);
+  document
+    .getElementById("btn-finalizar")
+    .addEventListener("click", finalizarTreino);
 
-  document.getElementById('modal-edit-close').addEventListener('click', () => fecharModal('modal-edit'));
-  document.getElementById('btn-add-ex').addEventListener('click', adicionarExercicioNoModal);
-  document.getElementById('btn-save-edit').addEventListener('click', salvarTreino);
-  document.getElementById('modal-history-close').addEventListener('click', () => fecharModal('modal-history'));
-  document.getElementById('modal-info-close').addEventListener('click', () => fecharModal('modal-info'));
-  document.getElementById('modal-cat-close').addEventListener('click', () => fecharModal('modal-categorias'));
-  document.getElementById('btn-add-cat').addEventListener('click', adicionarCategoriaNoModal);
-  document.getElementById('btn-save-cat').addEventListener('click', salvarCategorias);
-  document.getElementById('btn-categorias').addEventListener('click', abrirModalCategorias);
-  document.getElementById('btn-novo-treino').addEventListener('click', () => abrirModalTreino(null));
+  document
+    .getElementById("modal-edit-close")
+    .addEventListener("click", () => fecharModal("modal-edit"));
+  document
+    .getElementById("btn-add-ex")
+    .addEventListener("click", adicionarExercicioNoModal);
+  document
+    .getElementById("btn-save-edit")
+    .addEventListener("click", salvarTreino);
+  document
+    .getElementById("modal-history-close")
+    .addEventListener("click", () => fecharModal("modal-history"));
+  document
+    .getElementById("modal-info-close")
+    .addEventListener("click", () => fecharModal("modal-info"));
+  document
+    .getElementById("modal-cat-close")
+    .addEventListener("click", () => fecharModal("modal-categorias"));
+  document
+    .getElementById("btn-add-cat")
+    .addEventListener("click", adicionarCategoriaNoModal);
+  document
+    .getElementById("btn-save-cat")
+    .addEventListener("click", salvarCategorias);
+  document
+    .getElementById("btn-categorias")
+    .addEventListener("click", abrirModalCategorias);
+  document
+    .getElementById("btn-novo-treino")
+    .addEventListener("click", () => abrirModalTreino(null));
+  document
+    .getElementById("timer-cancel")
+    .addEventListener("click", cancelTimer);
+  document
+    .getElementById("timer-skip-options")
+    .addEventListener("click", skipToFinish);
+  document
+    .getElementById("timer-skip-rest")
+    .addEventListener("click", skipToFinish);
+  document.querySelectorAll(".timer-option").forEach((btn) => {
+    btn.addEventListener("click", () => chooseRestTime(+btn.dataset.sec));
+  });
 
-  document.querySelectorAll('.modal-overlay').forEach(ov => {
-    ov.addEventListener('click', e => {
-      if (e.target === ov) ov.classList.remove('active');
+  // Corrige o countdown caso o celular tenha bloqueado a tela
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && activeTimer) tickTimer();
+  });
+
+  document.querySelectorAll(".modal-overlay").forEach((ov) => {
+    ov.addEventListener("click", (e) => {
+      if (e.target === ov) ov.classList.remove("active");
     });
   });
 
   const hoje = new Date();
-  const opts = { weekday: 'long', day: 'numeric', month: 'long' };
-  document.getElementById('hoje-text').textContent = hoje.toLocaleDateString('pt-BR', opts);
+  const opts = { weekday: "long", day: "numeric", month: "long" };
+  document.getElementById("hoje-text").textContent = hoje.toLocaleDateString(
+    "pt-BR",
+    opts,
+  );
 }
 
 function mostrarErroBoot(msg) {
   // Faixa temporária pra diagnóstico no celular
-  let box = document.getElementById('boot-error');
+  let box = document.getElementById("boot-error");
   if (!box) {
-    box = document.createElement('div');
-    box.id = 'boot-error';
-    box.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#b91c1c;color:#fff;padding:8px 12px;font-size:12px;z-index:9999;font-family:monospace;white-space:pre-wrap;';
+    box = document.createElement("div");
+    box.id = "boot-error";
+    box.style.cssText =
+      "position:fixed;top:0;left:0;right:0;background:#b91c1c;color:#fff;padding:8px 12px;font-size:12px;z-index:9999;font-family:monospace;white-space:pre-wrap;";
     document.body.appendChild(box);
   }
-  box.textContent += '⚠ ' + msg + '\n';
+  box.textContent += "⚠ " + msg + "\n";
 }
 
 // ===== HOME =====
@@ -125,56 +183,62 @@ function proximoSugerido() {
 }
 
 function renderHome() {
-  const hero = document.getElementById('hero-card');
+  const hero = document.getElementById("hero-card");
   const proxId = proximoSugerido();
 
   if (!proxId) {
-    hero.style.display = 'none';
+    hero.style.display = "none";
   } else {
-    hero.style.display = '';
+    hero.style.display = "";
     const prox = DATA.treinos[proxId];
-    document.getElementById('hero-nome').textContent = prox.nome;
-    document.getElementById('hero-info').textContent = `${prox.exercicios.length} exercícios`;
+    document.getElementById("hero-nome").textContent = prox.nome;
+    document.getElementById("hero-info").textContent =
+      `${prox.exercicios.length} exercícios`;
     hero.onclick = () => iniciarTreino(proxId);
   }
 
   // remove seções antigas
-  document.querySelectorAll('#screen-home .app-main .section').forEach(s => s.remove());
+  document
+    .querySelectorAll("#screen-home .app-main .section")
+    .forEach((s) => s.remove());
 
-  const main = document.querySelector('#screen-home .app-main');
-  const novoBtn = document.getElementById('btn-novo-treino');
+  const main = document.querySelector("#screen-home .app-main");
+  const novoBtn = document.getElementById("btn-novo-treino");
 
-  DATA.categorias.forEach(cat => {
-    const treinosDaCat = Object.entries(DATA.treinos)
-      .filter(([, t]) => t.categoria === cat.id);
+  DATA.categorias.forEach((cat) => {
+    const treinosDaCat = Object.entries(DATA.treinos).filter(
+      ([, t]) => t.categoria === cat.id,
+    );
 
-    const section = document.createElement('section');
-    section.className = 'section';
+    const section = document.createElement("section");
+    section.className = "section";
     section.innerHTML = `<h2 class="section-title">${escape(cat.nome)}</h2><div class="treinos-grid"></div>`;
-    const grid = section.querySelector('.treinos-grid');
+    const grid = section.querySelector(".treinos-grid");
 
     if (treinosDaCat.length === 0) {
       grid.innerHTML = `<p style="grid-column:1/-1;color:var(--text-muted);font-size:.85rem;margin:0;">Nenhum treino nesta categoria.</p>`;
     } else {
       treinosDaCat.forEach(([id, t]) => {
-        const isIso = cat.id === 'iso' || cat.id.startsWith('iso');
-        const card = document.createElement('div');
-        card.className = 'treino-card';
+        const isIso = cat.id === "iso" || cat.id.startsWith("iso");
+        const card = document.createElement("div");
+        card.className = "treino-card";
         card.dataset.treinoId = id;
         card.innerHTML = `
-          <span class="treino-tag ${isIso ? 'iso' : 'musc'}">${escape(cat.nome.slice(0, 5).toUpperCase())}</span>
+          <span class="treino-tag ${isIso ? "iso" : "musc"}">${escape(cat.nome.slice(0, 5).toUpperCase())}</span>
           <h3>${escape(t.nome)}</h3>
           <p>${t.exercicios.length} exercícios</p>
           <button class="treino-card-edit" data-treino-id="${id}" aria-label="Editar treino">✏️</button>
         `;
-        card.addEventListener('click', e => {
-          if (e.target.closest('.treino-card-edit')) return;
+        card.addEventListener("click", (e) => {
+          if (e.target.closest(".treino-card-edit")) return;
           iniciarTreino(id);
         });
-        card.querySelector('.treino-card-edit').addEventListener('click', e => {
-          e.stopPropagation();
-          abrirModalTreino(id);
-        });
+        card
+          .querySelector(".treino-card-edit")
+          .addEventListener("click", (e) => {
+            e.stopPropagation();
+            abrirModalTreino(id);
+          });
         grid.appendChild(card);
       });
     }
@@ -191,35 +255,35 @@ function iniciarTreino(treinoId) {
   session = {
     treinoId,
     treinoNome: t.nome,
-    exercicios: t.exercicios.map(ex => {
+    exercicios: t.exercicios.map((ex) => {
       const ranges = getRanges(ex);
       const defaultRange = ranges[2];
       return {
         nome: ex.nome,
-        unidade: ex.unidade || 'reps',
+        unidade: ex.unidade || "reps",
         nota: ex.nota,
-        descricao: ex.descricao || '',
-        imagem: ex.imagem || '',
+        descricao: ex.descricao || "",
+        imagem: ex.imagem || "",
         pesoSugerido: ex.pesoSugerido,
         series: Array.from({ length: ex.series }, () => ({
           range: defaultRange,
           peso: ex.pesoSugerido ?? 0,
-          feito: false
-        }))
+          feito: false,
+        })),
       };
-    })
+    }),
   };
-  showScreen('workout');
+  showScreen("workout");
   renderWorkout();
 }
 
 // ===== WORKOUT SCREEN =====
 function renderWorkout() {
-  document.getElementById('workout-title').textContent = session.treinoNome;
+  document.getElementById("workout-title").textContent = session.treinoNome;
   updateProgress();
 
-  const carousel = document.getElementById('carousel');
-  carousel.innerHTML = '';
+  const carousel = document.getElementById("carousel");
+  carousel.innerHTML = "";
   session.exercicios.forEach((ex, i) => {
     carousel.appendChild(createExerciseCard(ex, i));
   });
@@ -230,12 +294,12 @@ function renderWorkout() {
 }
 
 function createExerciseCard(ex, i) {
-  const card = document.createElement('div');
-  card.className = 'exercise-card';
+  const card = document.createElement("div");
+  card.className = "exercise-card";
   card.dataset.ex = i;
 
   const ranges = getRanges(ex);
-  const isIso = ex.unidade === 'seg';
+  const isIso = ex.unidade === "seg";
 
   const imgInner = ex.imagem
     ? `<img src="${escape(ex.imagem)}" alt="${escape(ex.nome)}" class="ex-image" loading="lazy">`
@@ -259,32 +323,44 @@ function createExerciseCard(ex, i) {
     <h2 class="ex-name">${escape(ex.nome)}</h2>
 
     <div class="series-carousel" data-ex="${i}">
-      ${ex.series.map((s, si) => `
+      ${ex.series
+        .map(
+          (s, si) => `
         <div class="serie-slide" data-serie="${si}">
           <div class="serie-header">
             <span class="serie-title">Série ${si + 1}</span>
-            <button class="check-btn ${s.feito ? 'checked' : ''}"
+            <button class="check-btn ${s.feito ? "checked" : ""}"
                     data-ex="${i}" data-serie="${si}" aria-label="Concluir série">✓</button>
           </div>
           <div class="rep-pills">
-            ${ranges.map(r => `
-              <button class="rep-pill ${s.range === r ? 'active' : ''}"
+            ${ranges
+              .map(
+                (r) => `
+              <button class="rep-pill ${s.range === r ? "active" : ""}"
                       data-ex="${i}" data-serie="${si}" data-range="${r}">${r}</button>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
-          ${isIso ? '' : `
+          ${
+            isIso
+              ? ""
+              : `
             <div class="weight-stepper">
               <button class="weight-btn" data-ex="${i}" data-serie="${si}" data-action="dec" aria-label="Diminuir peso">−</button>
               <span class="weight-value">${s.peso != null ? s.peso : 0} kg</span>
               <button class="weight-btn" data-ex="${i}" data-serie="${si}" data-action="inc" aria-label="Aumentar peso">+</button>
             </div>
-          `}
+          `
+          }
         </div>
-      `).join('')}
+      `,
+        )
+        .join("")}
     </div>
 
     <div class="series-dots" data-ex="${i}">
-      ${ex.series.map((_, si) => `<span class="series-dot ${si === 0 ? 'active' : ''}"></span>`).join('')}
+      ${ex.series.map((_, si) => `<span class="series-dot ${si === 0 ? "active" : ""}"></span>`).join("")}
     </div>
   `;
 
@@ -292,60 +368,75 @@ function createExerciseCard(ex, i) {
 }
 
 function escape(s) {
-  return String(s).replace(/[&<>"']/g, c => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[c]));
+  return String(s).replace(
+    /[&<>"']/g,
+    (c) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[c],
+  );
 }
 
 function setupCarouselEvents() {
-  const carousel = document.getElementById('carousel');
+  const carousel = document.getElementById("carousel");
 
-  carousel.addEventListener('click', e => {
-    const infoBtn = e.target.closest('.info-btn');
+  carousel.addEventListener("click", (e) => {
+    const infoBtn = e.target.closest(".info-btn");
     if (infoBtn) {
       abrirInfoExercicio(+infoBtn.dataset.ex);
       return;
     }
 
-    const check = e.target.closest('.check-btn');
+    const check = e.target.closest(".check-btn");
     if (check) {
       const exIdx = +check.dataset.ex;
       const serieIdx = +check.dataset.serie;
       const s = session.exercicios[exIdx].series[serieIdx];
-      s.feito = !s.feito;
-      check.classList.toggle('checked', s.feito);
-      updateProgress();
+
+      if (s.feito) {
+        // desmarcar é imediato
+        s.feito = false;
+        check.classList.remove("checked");
+        updateProgress();
+      } else if (!activeTimer) {
+        startSeriesFlow(exIdx, serieIdx);
+      }
       return;
     }
 
-    const pill = e.target.closest('.rep-pill');
+    const pill = e.target.closest(".rep-pill");
     if (pill) {
       const exIdx = +pill.dataset.ex;
       const serieIdx = +pill.dataset.serie;
       session.exercicios[exIdx].series[serieIdx].range = pill.dataset.range;
-      pill.parentElement.querySelectorAll('.rep-pill').forEach(p => {
-        p.classList.toggle('active', p === pill);
+      pill.parentElement.querySelectorAll(".rep-pill").forEach((p) => {
+        p.classList.toggle("active", p === pill);
       });
       return;
     }
 
-    const wBtn = e.target.closest('.weight-btn');
+    const wBtn = e.target.closest(".weight-btn");
     if (wBtn) {
       const exIdx = +wBtn.dataset.ex;
       const serieIdx = +wBtn.dataset.serie;
       const s = session.exercicios[exIdx].series[serieIdx];
       const cur = s.peso ?? 0;
-      const delta = wBtn.dataset.action === 'inc' ? 1 : -1;
+      const delta = wBtn.dataset.action === "inc" ? 1 : -1;
       s.peso = Math.max(0, cur + delta);
-      wBtn.parentElement.querySelector('.weight-value').textContent = s.peso + ' kg';
+      wBtn.parentElement.querySelector(".weight-value").textContent =
+        s.peso + " kg";
       return;
     }
 
-    const seriesBtn = e.target.closest('.btn-series');
+    const seriesBtn = e.target.closest(".btn-series");
     if (seriesBtn) {
-      const card = seriesBtn.closest('.exercise-card');
+      const card = seriesBtn.closest(".exercise-card");
       const exIdx = +card.dataset.ex;
-      const delta = seriesBtn.dataset.action === 'inc' ? 1 : -1;
+      const delta = seriesBtn.dataset.action === "inc" ? 1 : -1;
       changeSeriesCount(exIdx, delta, card);
     }
   });
@@ -364,7 +455,7 @@ function changeSeriesCount(exIdx, delta, cardEl) {
       ex.series.push({
         range: defaultRange,
         peso: ex.pesoSugerido ?? 0,
-        feito: false
+        feito: false,
       });
     }
   } else {
@@ -379,65 +470,216 @@ function changeSeriesCount(exIdx, delta, cardEl) {
 
 function updateProgress() {
   const total = session.exercicios.length;
-  const done = session.exercicios.filter(ex => ex.series.some(s => s.feito)).length;
-  document.getElementById('workout-progress').textContent = `${done} de ${total} feitos`;
+  const done = session.exercicios.filter((ex) =>
+    ex.series.some((s) => s.feito),
+  ).length;
+  document.getElementById("workout-progress").textContent =
+    `${done} de ${total} feitos`;
 }
 
 function renderDots() {
-  const dots = document.getElementById('dots');
-  dots.innerHTML = session.exercicios.map((_, i) =>
-    `<span class="dot ${i === 0 ? 'active' : ''}"></span>`
-  ).join('');
+  const dots = document.getElementById("dots");
+  dots.innerHTML = session.exercicios
+    .map((_, i) => `<span class="dot ${i === 0 ? "active" : ""}"></span>`)
+    .join("");
 }
 
 let carouselObserver = null;
 function setupCarouselObserver() {
-  const carousel = document.getElementById('carousel');
+  const carousel = document.getElementById("carousel");
   if (carouselObserver) carouselObserver.disconnect();
-  carouselObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
-        const idx = +entry.target.dataset.ex;
-        document.querySelectorAll('.dot').forEach((d, i) => {
-          d.classList.toggle('active', i === idx);
-        });
-      }
-    });
-  }, { root: carousel, threshold: 0.6 });
-  carousel.querySelectorAll('.exercise-card').forEach(c => carouselObserver.observe(c));
+  carouselObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+          const idx = +entry.target.dataset.ex;
+          document.querySelectorAll(".dot").forEach((d, i) => {
+            d.classList.toggle("active", i === idx);
+          });
+        }
+      });
+    },
+    { root: carousel, threshold: 0.6 },
+  );
+  carousel
+    .querySelectorAll(".exercise-card")
+    .forEach((c) => carouselObserver.observe(c));
 }
 
 function setupSeriesCarouselObserver() {
-  document.querySelectorAll('.series-carousel').forEach(carousel => {
+  document.querySelectorAll(".series-carousel").forEach((carousel) => {
     const exIdx = +carousel.dataset.ex;
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
-          const si = +entry.target.dataset.serie;
-          const dots = document.querySelectorAll(`.series-dots[data-ex="${exIdx}"] .series-dot`);
-          dots.forEach((d, i) => d.classList.toggle('active', i === si));
-        }
-      });
-    }, { root: carousel, threshold: 0.6 });
-    carousel.querySelectorAll('.serie-slide').forEach(s => observer.observe(s));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+            const si = +entry.target.dataset.serie;
+            const dots = document.querySelectorAll(
+              `.series-dots[data-ex="${exIdx}"] .series-dot`,
+            );
+            dots.forEach((d, i) => d.classList.toggle("active", i === si));
+          }
+        });
+      },
+      { root: carousel, threshold: 0.6 },
+    );
+    carousel
+      .querySelectorAll(".serie-slide")
+      .forEach((s) => observer.observe(s));
   });
+}
+
+// ===== TIMER DE SÉRIE + DESCANSO =====
+let activeTimer = null;
+
+function startSeriesFlow(exIdx, serieIdx) {
+  if (activeTimer || !session) return;
+
+  activeTimer = {
+    exIdx,
+    serieIdx,
+    stage: "prep",
+    endAt: Date.now() + 10000,
+    interval: null,
+  };
+
+  document.getElementById("timer-overlay").classList.add("active");
+  renderTimerStage();
+  activeTimer.interval = setInterval(tickTimer, 250);
+}
+
+function tickTimer() {
+  if (!activeTimer) return;
+  const remainingMs = Math.max(0, activeTimer.endAt - Date.now());
+
+  if (activeTimer.stage === "prep") {
+    const sec = Math.ceil(remainingMs / 1000);
+    const el = document.getElementById("timer-prep-num");
+    if (el) el.textContent = sec;
+
+    if (remainingMs <= 0) {
+      activeTimer.stage = "options";
+      renderTimerStage();
+    }
+  } else if (activeTimer.stage === "rest") {
+    const sec = Math.ceil(remainingMs / 1000);
+    const el = document.getElementById("timer-rest-num");
+    if (el) el.textContent = formatTimer(sec);
+
+    if (remainingMs <= 0) {
+      finishSeriesFlow(true);
+    }
+  }
+}
+
+function renderTimerStage() {
+  if (!activeTimer) return;
+  const prep = document.getElementById("timer-stage-prep");
+  const options = document.getElementById("timer-stage-options");
+  const rest = document.getElementById("timer-stage-rest");
+
+  prep.style.display = "none";
+  options.style.display = "none";
+  rest.style.display = "none";
+
+  if (activeTimer.stage === "prep") {
+    prep.style.display = "";
+    const sec = Math.ceil(Math.max(0, activeTimer.endAt - Date.now()) / 1000);
+    document.getElementById("timer-prep-num").textContent = sec;
+  } else if (activeTimer.stage === "options") {
+    options.style.display = "";
+  } else if (activeTimer.stage === "rest") {
+    rest.style.display = "";
+    const sec = Math.ceil(Math.max(0, activeTimer.endAt - Date.now()) / 1000);
+    document.getElementById("timer-rest-num").textContent = formatTimer(sec);
+  }
+}
+
+function chooseRestTime(seconds) {
+  if (!activeTimer) return;
+  activeTimer.stage = "rest";
+  activeTimer.endAt = Date.now() + seconds * 1000;
+  renderTimerStage();
+}
+
+function skipToFinish() {
+  if (!activeTimer) return;
+  finishSeriesFlow(true);
+}
+
+function cancelTimer() {
+  finishSeriesFlow(false);
+}
+
+function abortTimer() {
+  if (!activeTimer) return;
+  clearInterval(activeTimer.interval);
+  activeTimer = null;
+  document.getElementById("timer-overlay").classList.remove("active");
+}
+
+function finishSeriesFlow(validate) {
+  if (!activeTimer) return;
+  clearInterval(activeTimer.interval);
+  const { exIdx, serieIdx } = activeTimer;
+  activeTimer = null;
+  document.getElementById("timer-overlay").classList.remove("active");
+
+  if (!validate || !session) return;
+
+  const s = session.exercicios[exIdx]?.series[serieIdx];
+  if (!s) return;
+
+  s.feito = true;
+  const check = document.querySelector(
+    `.check-btn[data-ex="${exIdx}"][data-serie="${serieIdx}"]`
+  );
+  if (check) check.classList.add("checked");
+  updateProgress();
+
+  // Auto-avança pra próxima série, se existir
+  const ex = session.exercicios[exIdx];
+  const nextSerieIdx = serieIdx + 1;
+  if (ex && nextSerieIdx < ex.series.length) {
+    setTimeout(() => {
+      const slide = document.querySelector(
+        `.series-carousel[data-ex="${exIdx}"] [data-serie="${nextSerieIdx}"]`
+      );
+      if (slide) {
+        slide.scrollIntoView({
+          behavior: "smooth",
+          inline: "center",
+          block: "nearest",
+        });
+      }
+    }, 150);
+  }
+}
+
+function formatTimer(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
 }
 
 // ===== FINALIZAR =====
 async function finalizarTreino() {
-  const algumPreenchido = session.exercicios.some(ex => ex.series.some(s => s.feito));
+  abortTimer();
+  const algumPreenchido = session.exercicios.some((ex) =>
+    ex.series.some((s) => s.feito),
+  );
   if (!algumPreenchido) {
-    alert('Marque pelo menos uma série antes de finalizar.');
+    alert("Marque pelo menos uma série antes de finalizar.");
     return;
   }
-  if (!confirm('Finalizar este treino e salvar no histórico?')) return;
+  if (!confirm("Finalizar este treino e salvar no histórico?")) return;
 
   const registro = {
     data: new Date().toISOString(),
     treinoId: session.treinoId,
     treinoNome: session.treinoNome,
     exercicios: session.exercicios,
-    concluido: true
+    concluido: true,
   };
 
   DATA = await appendHistorico(registro);
@@ -445,14 +687,21 @@ async function finalizarTreino() {
 
   renderHome();
   renderHistory();
-  showScreen('home');
+  showScreen("home");
 }
 
 function voltarDoTreino() {
-  const algoMarcado = session.exercicios.some(ex => ex.series.some(s => s.feito));
-  if (algoMarcado && !confirm('Sair sem finalizar? As marcações serão perdidas.')) return;
+  const algoMarcado = session.exercicios.some((ex) =>
+    ex.series.some((s) => s.feito),
+  );
+  if (
+    algoMarcado &&
+    !confirm("Sair sem finalizar? As marcações serão perdidas.")
+  )
+    return;
+  abortTimer();
   session = null;
-  showScreen('home');
+  showScreen("home");
 }
 
 // ===== HISTÓRICO =====
@@ -461,37 +710,44 @@ function renderHistory() {
     setTimeout(renderHistory, 100);
     return;
   }
-  const list = document.getElementById('history-list');
-  const sub = document.getElementById('history-sub');
+  const list = document.getElementById("history-list");
+  const sub = document.getElementById("history-sub");
   if (!list || !sub) {
     setTimeout(renderHistory, 100);
     return;
   }
 
-  list.innerHTML = '';
+  list.innerHTML = "";
   const hist = Array.isArray(DATA.historico) ? DATA.historico : [];
   const total = hist.length;
 
-  sub.textContent = total === 0 ? 'Nenhum treino ainda'
-    : `${total} treino${total > 1 ? 's' : ''} registrado${total > 1 ? 's' : ''}`;
+  sub.textContent =
+    total === 0
+      ? "Nenhum treino ainda"
+      : `${total} treino${total > 1 ? "s" : ""} registrado${total > 1 ? "s" : ""}`;
 
   if (total === 0) {
-    list.innerHTML = '<p class="empty">Seus treinos finalizados aparecerão aqui.</p>';
+    list.innerHTML =
+      '<p class="empty">Seus treinos finalizados aparecerão aqui.</p>';
     return;
   }
 
   hist.forEach((reg, idx) => {
     const d = new Date(reg.data);
-    const dataFmt = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) +
-      ' · ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const dataFmt =
+      d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }) +
+      " · " +
+      d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
     const exs = Array.isArray(reg.exercicios) ? reg.exercicios : [];
-    const feitos = exs.filter(ex => Array.isArray(ex.series) && ex.series.some(s => s.feito)).length;
+    const feitos = exs.filter(
+      (ex) => Array.isArray(ex.series) && ex.series.some((s) => s.feito),
+    ).length;
 
-    const card = document.createElement('button');
-    card.className = 'hist-card';
+    const card = document.createElement("button");
+    card.className = "hist-card";
     card.innerHTML = `
       <div class="hist-top">
-        <span class="hist-treino">${escape(reg.treinoNome || 'Treino')}</span>
+        <span class="hist-treino">${escape(reg.treinoNome || "Treino")}</span>
         <span class="hist-date">${dataFmt}</span>
       </div>
       <p class="hist-summary">${feitos} de ${exs.length} exercícios concluídos</p>
@@ -505,15 +761,15 @@ function abrirInfoExercicio(exIdx) {
   const ex = session.exercicios[exIdx];
   if (!ex) return;
 
-  document.getElementById('modal-info-title').textContent = ex.nome;
-  const body = document.getElementById('modal-info-body');
+  document.getElementById("modal-info-title").textContent = ex.nome;
+  const body = document.getElementById("modal-info-body");
   body.innerHTML = `
-    ${ex.imagem ? `<img src="${escape(ex.imagem)}" alt="${escape(ex.nome)}" style="width:100%;border-radius:12px;margin-bottom:14px;display:block;">` : ''}
-    ${ex.descricao ? `<p style="font-size:.92rem;line-height:1.55;margin:0 0 14px;color:var(--text);white-space:pre-wrap;">${escape(ex.descricao)}</p>` : ''}
-    ${ex.nota ? `<div style="background:var(--surface-2);border-radius:10px;padding:12px 14px;font-size:.85rem;color:var(--text-muted);line-height:1.45;"><strong style="color:var(--text);display:block;margin-bottom:4px;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;">Nota</strong>${escape(ex.nota)}</div>` : ''}
-    ${!ex.imagem && !ex.descricao && !ex.nota ? '<p style="color:var(--text-muted);text-align:center;padding:24px 0;">Nenhuma descrição cadastrada ainda.<br>Use o ✏️ no topo pra adicionar.</p>' : ''}
+    ${ex.imagem ? `<img src="${escape(ex.imagem)}" alt="${escape(ex.nome)}" style="width:100%;border-radius:12px;margin-bottom:14px;display:block;">` : ""}
+    ${ex.descricao ? `<p style="font-size:.92rem;line-height:1.55;margin:0 0 14px;color:var(--text);white-space:pre-wrap;">${escape(ex.descricao)}</p>` : ""}
+    ${ex.nota ? `<div style="background:var(--surface-2);border-radius:10px;padding:12px 14px;font-size:.85rem;color:var(--text-muted);line-height:1.45;"><strong style="color:var(--text);display:block;margin-bottom:4px;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;">Nota</strong>${escape(ex.nota)}</div>` : ""}
+    ${!ex.imagem && !ex.descricao && !ex.nota ? '<p style="color:var(--text-muted);text-align:center;padding:24px 0;">Nenhuma descrição cadastrada ainda.<br>Use o ✏️ no topo pra adicionar.</p>' : ""}
   `;
-  document.getElementById('modal-info').classList.add('active');
+  document.getElementById("modal-info").classList.add("active");
 }
 
 function abrirDetalheHistorico(idx) {
@@ -522,34 +778,39 @@ function abrirDetalheHistorico(idx) {
   if (!reg) return;
 
   const d = new Date(reg.data);
-  document.getElementById('modal-history-title').textContent = reg.treinoNome || 'Treino';
+  document.getElementById("modal-history-title").textContent =
+    reg.treinoNome || "Treino";
 
   const exs = Array.isArray(reg.exercicios) ? reg.exercicios : [];
-  const body = document.getElementById('modal-history-body');
+  const body = document.getElementById("modal-history-body");
   body.innerHTML = `
     <p style="color:var(--text-muted);font-size:.85rem;margin:0 0 12px;">
-      ${d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
-      às ${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+      ${d.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
+      às ${d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
     </p>
-    ${exs.map(ex => {
-      const series = Array.isArray(ex.series) ? ex.series : [];
-      const feitas = series.filter(s => s.feito);
-      if (feitas.length === 0) return '';
-      const isIso = ex.unidade === 'seg';
-      return `
+    ${exs
+      .map((ex) => {
+        const series = Array.isArray(ex.series) ? ex.series : [];
+        const feitas = series.filter((s) => s.feito);
+        if (feitas.length === 0) return "";
+        const isIso = ex.unidade === "seg";
+        return `
         <div class="hist-detail-ex">
-          <strong>${escape(ex.nome || 'Exercício')}</strong>
-          ${feitas.map((s, i) => {
-            const range = s.range || (s.reps != null ? `${s.reps}` : '-');
-            const peso = (!isIso && s.peso != null) ? ` · ${s.peso}kg` : '';
-            return `<div class="serie-line">Série ${i + 1}: ${range}${peso}</div>`;
-          }).join('')}
+          <strong>${escape(ex.nome || "Exercício")}</strong>
+          ${feitas
+            .map((s, i) => {
+              const range = s.range || (s.reps != null ? `${s.reps}` : "-");
+              const peso = !isIso && s.peso != null ? ` · ${s.peso}kg` : "";
+              return `<div class="serie-line">Série ${i + 1}: ${range}${peso}</div>`;
+            })
+            .join("")}
         </div>
       `;
-    }).join('')}
+      })
+      .join("")}
   `;
 
-  document.getElementById('modal-history').classList.add('active');
+  document.getElementById("modal-history").classList.add("active");
 }
 
 // ===== MODAL: CRIAR/EDITAR TREINO =====
@@ -558,35 +819,54 @@ let editTreinoDraft = null;
 function abrirModalTreino(treinoId) {
   const isNovo = !treinoId;
   const t = isNovo ? null : DATA.treinos[treinoId];
-  const categoriaPadrao = DATA.categorias[0]?.id || 'musc';
+  const categoriaPadrao = DATA.categorias[0]?.id || "musc";
 
   editTreinoDraft = {
     id: treinoId,
-    nome: t ? t.nome : '',
+    nome: t ? t.nome : "",
     categoria: t ? t.categoria : categoriaPadrao,
-    exercicios: t ? JSON.parse(JSON.stringify(t.exercicios.map(ex => ({
-      nome: ex.nome,
-      series: ex.series,
-      pesoSugerido: ex.pesoSugerido ?? null,
-      unidade: ex.unidade || 'reps',
-      nota: ex.nota || '',
-      descricao: ex.descricao || '',
-      imagem: ex.imagem || ''
-    })))) : [
-      { nome: '', series: 3, pesoSugerido: null, unidade: 'reps', nota: '', descricao: '', imagem: '' }
-    ]
+    exercicios: t
+      ? JSON.parse(
+          JSON.stringify(
+            t.exercicios.map((ex) => ({
+              nome: ex.nome,
+              series: ex.series,
+              pesoSugerido: ex.pesoSugerido ?? null,
+              unidade: ex.unidade || "reps",
+              nota: ex.nota || "",
+              descricao: ex.descricao || "",
+              imagem: ex.imagem || "",
+            })),
+          ),
+        )
+      : [
+          {
+            nome: "",
+            series: 3,
+            pesoSugerido: null,
+            unidade: "reps",
+            nota: "",
+            descricao: "",
+            imagem: "",
+          },
+        ],
   };
 
-  document.getElementById('modal-edit-title').textContent = isNovo ? 'Novo treino' : 'Editar treino';
+  document.getElementById("modal-edit-title").textContent = isNovo
+    ? "Novo treino"
+    : "Editar treino";
   renderTreinoBody();
-  document.getElementById('modal-edit').classList.add('active');
+  document.getElementById("modal-edit").classList.add("active");
 }
 
 function renderTreinoBody() {
-  const body = document.getElementById('modal-edit-body');
-  const catOptions = DATA.categorias.map(c =>
-    `<option value="${escape(c.id)}" ${c.id === editTreinoDraft.categoria ? 'selected' : ''}>${escape(c.nome)}</option>`
-  ).join('');
+  const body = document.getElementById("modal-edit-body");
+  const catOptions = DATA.categorias
+    .map(
+      (c) =>
+        `<option value="${escape(c.id)}" ${c.id === editTreinoDraft.categoria ? "selected" : ""}>${escape(c.nome)}</option>`,
+    )
+    .join("");
 
   body.innerHTML = `
     <div class="edit-treino-header">
@@ -600,71 +880,94 @@ function renderTreinoBody() {
       </div>
     </div>
     <div id="edit-ex-list">
-      ${editTreinoDraft.exercicios.map((ex, i) => `
+      ${editTreinoDraft.exercicios
+        .map(
+          (ex, i) => `
         <div class="edit-ex" data-idx="${i}">
           <input type="text" class="edit-nome" value="${escape(ex.nome)}" placeholder="Nome do exercício">
           <button class="btn-remove" data-idx="${i}" aria-label="Remover">×</button>
           <div class="row-2">
             <input type="number" class="edit-series" min="1" value="${ex.series}" placeholder="Séries">
-            <input type="number" class="edit-peso" step="0.5" min="0" value="${ex.pesoSugerido ?? ''}" placeholder="Peso kg">
+            <input type="number" class="edit-peso" step="0.5" min="0" value="${ex.pesoSugerido ?? ""}" placeholder="Peso kg">
           </div>
           <input type="text" class="edit-imagem" value="${escape(ex.imagem)}" placeholder="URL da imagem (opcional)">
           <textarea class="edit-descricao" placeholder="Descrição do exercício (opcional)">${escape(ex.descricao)}</textarea>
         </div>
-      `).join('')}
+      `,
+        )
+        .join("")}
     </div>
   `;
 
-  body.querySelector('#edit-treino-nome').oninput = e => editTreinoDraft.nome = e.target.value;
-  body.querySelector('#edit-treino-categoria').onchange = e => editTreinoDraft.categoria = e.target.value;
+  body.querySelector("#edit-treino-nome").oninput = (e) =>
+    (editTreinoDraft.nome = e.target.value);
+  body.querySelector("#edit-treino-categoria").onchange = (e) =>
+    (editTreinoDraft.categoria = e.target.value);
 
-  body.querySelectorAll('#edit-ex-list .btn-remove').forEach(b => {
+  body.querySelectorAll("#edit-ex-list .btn-remove").forEach((b) => {
     b.onclick = () => {
       editTreinoDraft.exercicios.splice(+b.dataset.idx, 1);
       renderTreinoBody();
     };
   });
 
-  body.querySelectorAll('#edit-ex-list .edit-ex').forEach(row => {
+  body.querySelectorAll("#edit-ex-list .edit-ex").forEach((row) => {
     const idx = +row.dataset.idx;
-    row.querySelector('.edit-nome').oninput = e => editTreinoDraft.exercicios[idx].nome = e.target.value;
-    row.querySelector('.edit-series').oninput = e =>
-      editTreinoDraft.exercicios[idx].series = Math.max(1, +e.target.value || 1);
-    row.querySelector('.edit-peso').oninput = e =>
-      editTreinoDraft.exercicios[idx].pesoSugerido = e.target.value === '' ? null : Number(e.target.value);
-    row.querySelector('.edit-imagem').oninput = e =>
-      editTreinoDraft.exercicios[idx].imagem = e.target.value.trim();
-    row.querySelector('.edit-descricao').oninput = e =>
-      editTreinoDraft.exercicios[idx].descricao = e.target.value;
+    row.querySelector(".edit-nome").oninput = (e) =>
+      (editTreinoDraft.exercicios[idx].nome = e.target.value);
+    row.querySelector(".edit-series").oninput = (e) =>
+      (editTreinoDraft.exercicios[idx].series = Math.max(
+        1,
+        +e.target.value || 1,
+      ));
+    row.querySelector(".edit-peso").oninput = (e) =>
+      (editTreinoDraft.exercicios[idx].pesoSugerido =
+        e.target.value === "" ? null : Number(e.target.value));
+    row.querySelector(".edit-imagem").oninput = (e) =>
+      (editTreinoDraft.exercicios[idx].imagem = e.target.value.trim());
+    row.querySelector(".edit-descricao").oninput = (e) =>
+      (editTreinoDraft.exercicios[idx].descricao = e.target.value);
   });
 }
 
 function adicionarExercicioNoModal() {
   editTreinoDraft.exercicios.push({
-    nome: '', series: 3, pesoSugerido: null, unidade: 'reps', nota: '', descricao: '', imagem: ''
+    nome: "",
+    series: 3,
+    pesoSugerido: null,
+    unidade: "reps",
+    nota: "",
+    descricao: "",
+    imagem: "",
   });
   renderTreinoBody();
-  const inputs = document.querySelectorAll('#edit-ex-list .edit-nome');
+  const inputs = document.querySelectorAll("#edit-ex-list .edit-nome");
   inputs[inputs.length - 1]?.focus();
 }
 
 async function salvarTreino() {
   const nome = editTreinoDraft.nome.trim();
-  if (!nome) { alert('Dê um nome ao treino.'); return; }
+  if (!nome) {
+    alert("Dê um nome ao treino.");
+    return;
+  }
 
   const exercicios = editTreinoDraft.exercicios
-    .filter(ex => ex.nome.trim() !== '')
-    .map(ex => ({
+    .filter((ex) => ex.nome.trim() !== "")
+    .map((ex) => ({
       nome: ex.nome.trim(),
       series: Math.max(1, ex.series),
       pesoSugerido: ex.pesoSugerido,
       unidade: ex.unidade,
       nota: ex.nota || undefined,
       descricao: ex.descricao || undefined,
-      imagem: ex.imagem || undefined
+      imagem: ex.imagem || undefined,
     }));
 
-  if (exercicios.length === 0) { alert('Adicione pelo menos um exercício.'); return; }
+  if (exercicios.length === 0) {
+    alert("Adicione pelo menos um exercício.");
+    return;
+  }
 
   const eraAtual = session && session.treinoId === editTreinoDraft.id;
   let idFinal;
@@ -675,15 +978,19 @@ async function salvarTreino() {
       ...DATA.treinos[idFinal],
       nome,
       categoria: editTreinoDraft.categoria,
-      exercicios
+      exercicios,
     };
   } else {
-    idFinal = genId('treino');
-    DATA.treinos[idFinal] = { nome, categoria: editTreinoDraft.categoria, exercicios };
+    idFinal = genId("treino");
+    DATA.treinos[idFinal] = {
+      nome,
+      categoria: editTreinoDraft.categoria,
+      exercicios,
+    };
   }
 
   await saveData(DATA);
-  fecharModal('modal-edit');
+  fecharModal("modal-edit");
 
   if (eraAtual) {
     session = null;
@@ -698,40 +1005,48 @@ async function salvarTreino() {
 let catDraft = null;
 
 function abrirModalCategorias() {
-  catDraft = DATA.categorias.map(c => ({ id: c.id, nome: c.nome }));
+  catDraft = DATA.categorias.map((c) => ({ id: c.id, nome: c.nome }));
   renderCategoriasBody();
-  document.getElementById('modal-categorias').classList.add('active');
+  document.getElementById("modal-categorias").classList.add("active");
 }
 
 function renderCategoriasBody() {
-  const body = document.getElementById('modal-cat-body');
+  const body = document.getElementById("modal-cat-body");
   body.innerHTML = `
-    ${catDraft.map((c, i) => {
-      const nTreinos = Object.values(DATA.treinos).filter(t => t.categoria === c.id).length;
-      return `
+    ${catDraft
+      .map((c, i) => {
+        const nTreinos = Object.values(DATA.treinos).filter(
+          (t) => t.categoria === c.id,
+        ).length;
+        return `
         <div class="cat-row">
           <input type="text" class="cat-nome" data-idx="${i}" value="${escape(c.nome)}" placeholder="Nome da categoria">
           <button class="btn-remove" data-idx="${i}" aria-label="Remover categoria">×</button>
         </div>
         <p style="font-size:.75rem;color:var(--text-muted);margin:-6px 0 12px 4px;">
-          ${nTreinos} treino${nTreinos === 1 ? '' : 's'} nesta categoria
+          ${nTreinos} treino${nTreinos === 1 ? "" : "s"} nesta categoria
         </p>
       `;
-    }).join('')}
-    ${catDraft.length === 0 ? '<p style="color:var(--text-muted);font-size:.9rem;">Nenhuma categoria. Adicione uma abaixo.</p>' : ''}
+      })
+      .join("")}
+    ${catDraft.length === 0 ? '<p style="color:var(--text-muted);font-size:.9rem;">Nenhuma categoria. Adicione uma abaixo.</p>' : ""}
   `;
 
-  body.querySelectorAll('.cat-nome').forEach(inp => {
-    inp.oninput = e => catDraft[+inp.dataset.idx].nome = e.target.value;
+  body.querySelectorAll(".cat-nome").forEach((inp) => {
+    inp.oninput = (e) => (catDraft[+inp.dataset.idx].nome = e.target.value);
   });
 
-  body.querySelectorAll('.btn-remove').forEach(b => {
+  body.querySelectorAll(".btn-remove").forEach((b) => {
     b.onclick = () => {
       const idx = +b.dataset.idx;
       const cat = catDraft[idx];
-      const nTreinos = Object.values(DATA.treinos).filter(t => t.categoria === cat.id).length;
+      const nTreinos = Object.values(DATA.treinos).filter(
+        (t) => t.categoria === cat.id,
+      ).length;
       if (nTreinos > 0) {
-        alert(`Não é possível excluir "${cat.nome}": tem ${nTreinos} treino(s) nela. Mova ou exclua os treinos antes.`);
+        alert(
+          `Não é possível excluir "${cat.nome}": tem ${nTreinos} treino(s) nela. Mova ou exclua os treinos antes.`,
+        );
         return;
       }
       catDraft.splice(idx, 1);
@@ -741,36 +1056,40 @@ function renderCategoriasBody() {
 }
 
 function adicionarCategoriaNoModal() {
-  catDraft.push({ id: genId('cat'), nome: 'Nova categoria' });
+  catDraft.push({ id: genId("cat"), nome: "Nova categoria" });
   renderCategoriasBody();
-  const inputs = document.querySelectorAll('#modal-cat-body .cat-nome');
+  const inputs = document.querySelectorAll("#modal-cat-body .cat-nome");
   const last = inputs[inputs.length - 1];
   last?.focus();
   last?.select();
 }
 
 async function salvarCategorias() {
-  const validas = catDraft.filter(c => c.nome.trim() !== '');
-  if (validas.length === 0) { alert('Adicione pelo menos uma categoria.'); return; }
-  DATA.categorias = validas.map(c => ({ id: c.id, nome: c.nome.trim() }));
+  const validas = catDraft.filter((c) => c.nome.trim() !== "");
+  if (validas.length === 0) {
+    alert("Adicione pelo menos uma categoria.");
+    return;
+  }
+  DATA.categorias = validas.map((c) => ({ id: c.id, nome: c.nome.trim() }));
   await saveData(DATA);
-  fecharModal('modal-categorias');
+  fecharModal("modal-categorias");
   renderHome();
 }
 
 function fecharModal(id) {
-  document.getElementById(id).classList.remove('active');
+  document.getElementById(id).classList.remove("active");
 }
 
 // ===== BOOT =====
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   init();
   setupCarouselEvents();
 
   // Marca visual de versão — REMOVA depois que confirmar
-  const tag = document.createElement('div');
-  tag.textContent = 'v3';
-  tag.style.cssText = 'position:fixed;bottom:80px;right:8px;font-size:10px;color:#22c55e;z-index:9998;background:rgba(0,0,0,.6);padding:2px 6px;border-radius:4px;';
+  const tag = document.createElement("div");
+  tag.textContent = "v3";
+  tag.style.cssText =
+    "position:fixed;bottom:80px;right:8px;font-size:10px;color:#22c55e;z-index:9998;background:rgba(0,0,0,.6);padding:2px 6px;border-radius:4px;";
   document.body.appendChild(tag);
 
   // Reforço: tenta renderizar o histórico por 2s após o boot
@@ -778,7 +1097,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const forcarHistorico = setInterval(() => {
     tentativas++;
     if (DATA && Array.isArray(DATA.historico)) {
-      try { renderHistory(); } catch (e) { console.error(e); }
+      try {
+        renderHistory();
+      } catch (e) {
+        console.error(e);
+      }
     }
     if (tentativas > 20) clearInterval(forcarHistorico);
   }, 100);

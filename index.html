@@ -131,6 +131,37 @@
     </div>
   </div>
 
+    <!-- TIMER OVERLAY (série + descanso) -->
+  <div class="timer-overlay" id="timer-overlay" role="dialog" aria-modal="true">
+    <button class="timer-cancel" id="timer-cancel" aria-label="Cancelar">✕</button>
+
+    <!-- Etapa 1: prep de 10s -->
+    <div class="timer-stage" id="timer-stage-prep">
+      <p class="timer-kicker">PREPARE-SE</p>
+      <div class="timer-big" id="timer-prep-num">10</div>
+      <p class="timer-hint">Série em execução</p>
+    </div>
+
+    <!-- Etapa 2: escolher descanso -->
+    <div class="timer-stage" id="timer-stage-options" style="display:none">
+      <p class="timer-kicker">DESCANSO</p>
+      <h2 class="timer-title">Quanto tempo?</h2>
+      <div class="timer-option-grid">
+        <button class="timer-option" data-sec="60">1 minuto</button>
+        <button class="timer-option" data-sec="90">1 minuto e 30s</button>
+        <button class="timer-option" data-sec="120">2 minutos</button>
+      </div>
+      <button class="timer-link" id="timer-skip-options">Pular descanso</button>
+    </div>
+
+    <!-- Etapa 3: descanso correndo -->
+    <div class="timer-stage" id="timer-stage-rest" style="display:none">
+      <p class="timer-kicker">DESCANSO</p>
+      <div class="timer-big" id="timer-rest-num">1:00</div>
+      <button class="timer-link" id="timer-skip-rest">Concluir agora</button>
+    </div>
+  </div>
+
   <!-- FOOTER GLOBAL -->
 <footer class="app-footer">
   <span>Feito por Alysson · </span>
