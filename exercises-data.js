@@ -19,6 +19,11 @@ const GRUPOS = {
   trapezio: "Trapézio",
 };
 
+// Imagens JPG complementares: Free Exercise DB (licença Unlicense / domínio público).
+// Fonte: https://github.com/yuhonas/free-exercise-db
+// GIFs ExerciseDB V1: uso não comercial e crédito à AscendAPI.
+// Fonte: https://oss.exercisedb.dev/docs
+
 const EXERCISE_LIBRARY = [
   // ===== PEITO =====
   {
@@ -95,7 +100,8 @@ const EXERCISE_LIBRARY = [
     nome: "Crucifixo inclinado com halteres",
     grupo: "peito",
     subgrupo: "Halteres",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Incline_Dumbbell_Flyes/0.jpg",
     explicacao:
       "Mesmo movimento do crucifixo, com banco inclinado. Foco na parte superior.",
   },
@@ -104,7 +110,8 @@ const EXERCISE_LIBRARY = [
     nome: "Crossover na polia alta",
     grupo: "peito",
     subgrupo: "Polia",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Crossover/0.jpg",
     explicacao:
       "Puxe as alças de cima pra baixo na frente do corpo. Tensão contínua e boa contração.",
   },
@@ -113,7 +120,8 @@ const EXERCISE_LIBRARY = [
     nome: "Crossover na polia baixa",
     grupo: "peito",
     subgrupo: "Polia",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Low_Cable_Crossover/0.jpg",
     explicacao: "De baixo pra cima; enfatiza a porção superior do peitoral.",
   },
   {
@@ -131,7 +139,8 @@ const EXERCISE_LIBRARY = [
     nome: "Flexão de braço",
     grupo: "peito",
     subgrupo: "Peso corporal",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pushups/0.jpg",
     explicacao:
       "Mãos na largura dos ombros, corpo reto. Peito desce rente ao chão.",
   },
@@ -172,7 +181,8 @@ const EXERCISE_LIBRARY = [
     nome: "Barra fixa pronada",
     grupo: "costas",
     subgrupo: "Peso corporal",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pullups/0.jpg",
     explicacao:
       "Pegada aberta, puxa o peito até a barra. Grande dorsal em destaque.",
   },
@@ -220,7 +230,8 @@ const EXERCISE_LIBRARY = [
     nome: "Remada curvada com barra",
     grupo: "costas",
     subgrupo: "Barra",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Barbell_Row/0.jpg",
     explicacao:
       "Tronco inclinado ~45°, puxe a barra até o abdômen mantendo a coluna neutra.",
   },
@@ -238,7 +249,8 @@ const EXERCISE_LIBRARY = [
     nome: "Remada unilateral com halter",
     grupo: "costas",
     subgrupo: "Halteres",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Arm_Dumbbell_Row/0.jpg",
     explicacao:
       "Apoio no banco, puxe o halter em direção ao quadril. Trabalha um lado por vez.",
   },
@@ -257,7 +269,8 @@ const EXERCISE_LIBRARY = [
     nome: "Remada cavalinho (T-bar)",
     grupo: "costas",
     subgrupo: "Barra",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/T-Bar_Row_with_Handle/0.jpg",
     explicacao:
       "Barra presa no chão, puxa até o peito com tronco inclinado. Volume alto de costas.",
   },
@@ -295,7 +308,8 @@ const EXERCISE_LIBRARY = [
     nome: "Remada serrote",
     grupo: "costas",
     subgrupo: "Halteres",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Arm_Dumbbell_Row/0.jpg",
     explicacao: "Tronco apoiado, movimento mais vertical da remada unilateral.",
   },
   {
@@ -303,7 +317,8 @@ const EXERCISE_LIBRARY = [
     nome: "Levantamento terra",
     grupo: "costas",
     subgrupo: "Barra",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Deadlift/0.jpg",
     explicacao:
       "Exercício composto que recruta cadeia posterior inteira. Atenção à técnica.",
   },
@@ -418,7 +433,8 @@ const EXERCISE_LIBRARY = [
     nome: "Crucifixo inverso na polia",
     grupo: "ombros",
     subgrupo: "Polia",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Rear_Delt_Fly/0.jpg",
     explicacao: "Polias cruzadas na altura do peito; puxe abrindo os braços.",
   },
   {
@@ -426,7 +442,8 @@ const EXERCISE_LIBRARY = [
     nome: "Face pull",
     grupo: "ombros",
     subgrupo: "Polia",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Face_Pull/0.jpg",
     explicacao:
       "Corda na polia alta puxada em direção ao rosto. Posterior de ombro e trapézio.",
   },
@@ -649,7 +666,8 @@ const EXERCISE_LIBRARY = [
     nome: "Tríceps francês com halter",
     grupo: "triceps",
     subgrupo: "Halteres",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Dumbbell_Triceps_Extension/0.jpg",
     explicacao:
       "Halter atrás da cabeça, estenda o cotovelo. Alonga a cabeça longa do tríceps.",
   },
@@ -705,7 +723,8 @@ const EXERCISE_LIBRARY = [
     nome: "Supino fechado",
     grupo: "triceps",
     subgrupo: "Barra",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Close-Grip_Barbell_Bench_Press/0.jpg",
     explicacao:
       "Supino reto com pegada estreita; foco no tríceps e peitoral medial.",
   },
@@ -771,7 +790,8 @@ const EXERCISE_LIBRARY = [
     nome: "Rosca de punho com halteres",
     grupo: "antebraco",
     subgrupo: "Halteres",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_One-Arm_Dumbbell_Palms-Up_Wrist_Curl/0.jpg",
     explicacao:
       "Um halter por vez, apoio no banco. Trabalha flexores do punho.",
   },
@@ -799,7 +819,8 @@ const EXERCISE_LIBRARY = [
     nome: "Farmer walk",
     grupo: "antebraco",
     subgrupo: "Halteres",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Farmers_Walk/0.jpg",
     explicacao:
       "Caminhe segurando halteres pesados. Pega antebraço, trapézio e core.",
   },
@@ -863,7 +884,8 @@ const EXERCISE_LIBRARY = [
     nome: "Prancha frontal",
     grupo: "abdomen",
     subgrupo: "Peso corporal",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plank/0.jpg",
     explicacao:
       "Apoio nos antebraços e pontas dos pés, corpo reto. Isométrico clássico.",
   },
@@ -890,7 +912,8 @@ const EXERCISE_LIBRARY = [
     nome: "Crunch na polia",
     grupo: "abdomen",
     subgrupo: "Polia",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Crunch/0.jpg",
     explicacao: "Ajoelhado, puxe a corda pra baixo arredondando o tronco.",
   },
   {
@@ -898,7 +921,8 @@ const EXERCISE_LIBRARY = [
     nome: "Crunch máquina",
     grupo: "abdomen",
     subgrupo: "Máquina",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Ab_Crunch_Machine/0.jpg",
     explicacao: "Trajetória guiada; permite adicionar carga com segurança.",
   },
   {
@@ -915,7 +939,8 @@ const EXERCISE_LIBRARY = [
     nome: "Elevação de pernas no banco",
     grupo: "abdomen",
     subgrupo: "Peso corporal",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Flat_Bench_Lying_Leg_Raise/0.jpg",
     explicacao: "Deitado no banco, eleve as pernas retas até 90°.",
   },
   {
@@ -923,7 +948,8 @@ const EXERCISE_LIBRARY = [
     nome: "Russian twist",
     grupo: "abdomen",
     subgrupo: "Peso corporal",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Russian_Twist/0.jpg",
     explicacao:
       "Sentado com tronco inclinado, gire o tronco de um lado pro outro.",
   },
@@ -932,7 +958,8 @@ const EXERCISE_LIBRARY = [
     nome: "Abdominal bicicleta",
     grupo: "abdomen",
     subgrupo: "Peso corporal",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Air_Bike/0.jpg",
     explicacao: "Alterne cotovelo com joelho oposto, como se pedalasse.",
   },
   {
@@ -968,7 +995,8 @@ const EXERCISE_LIBRARY = [
     nome: "Mountain climber",
     grupo: "abdomen",
     subgrupo: "Peso corporal",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Mountain_Climbers/0.jpg",
     explicacao:
       "Em prancha, traga um joelho por vez em direção ao peito rápido.",
   },
@@ -1042,7 +1070,8 @@ const EXERCISE_LIBRARY = [
     nome: "Coice no cabo cruzado",
     grupo: "gluteos",
     subgrupo: "Polia",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Legged_Cable_Kickback/0.jpg",
     explicacao:
       "Cabo cruzado na frente do corpo; puxe a perna pra trás e pra cima.",
   },
@@ -1133,7 +1162,8 @@ const EXERCISE_LIBRARY = [
     nome: "Agachamento livre",
     grupo: "quadriceps",
     subgrupo: "Barra",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Squat/0.jpg",
     explicacao:
       "Barra nas costas, desça até coxas paralelas ao chão, suba estendendo.",
   },
@@ -1142,7 +1172,8 @@ const EXERCISE_LIBRARY = [
     nome: "Agachamento frontal",
     grupo: "quadriceps",
     subgrupo: "Barra",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Front_Barbell_Squat/0.jpg",
     explicacao:
       "Barra na frente dos ombros; tronco mais ereto, foco maior no quadríceps.",
   },
@@ -1171,7 +1202,8 @@ const EXERCISE_LIBRARY = [
     nome: "Agachamento hack máquina",
     grupo: "quadriceps",
     subgrupo: "Máquina",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hack_Squat/0.jpg",
     explicacao: "Máquina inclinada; foco intenso no quadríceps.",
   },
   {
@@ -1179,7 +1211,8 @@ const EXERCISE_LIBRARY = [
     nome: "Leg press 45°",
     grupo: "quadriceps",
     subgrupo: "Máquina",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Press/0.jpg",
     explicacao:
       "Empurre a plataforma com os pés na largura dos ombros. Quadríceps e glúteo.",
   },
@@ -1341,7 +1374,8 @@ const EXERCISE_LIBRARY = [
     nome: "Levantamento terra romeno",
     grupo: "posterior_coxa",
     subgrupo: "Barra",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Romanian_Deadlift/0.jpg",
     explicacao:
       "Joelhos semidobrados fixos, desça a barra pela frente da perna até sentir alongar.",
   },
@@ -1397,7 +1431,8 @@ const EXERCISE_LIBRARY = [
     nome: "Panturrilha em pé na máquina",
     grupo: "panturrilha",
     subgrupo: "Máquina",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Calf_Raises/0.jpg",
     explicacao:
       "Em pé, eleve os calcanhares o máximo possível e desça alongando.",
   },
@@ -1406,7 +1441,8 @@ const EXERCISE_LIBRARY = [
     nome: "Panturrilha sentado",
     grupo: "panturrilha",
     subgrupo: "Máquina",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Calf_Raise/0.jpg",
     explicacao:
       "Sentado, apoios nos joelhos, eleve os calcanhares. Foco no sóleo.",
   },
@@ -1461,7 +1497,7 @@ const EXERCISE_LIBRARY = [
     nome: "Panturrilha unilateral em pé",
     grupo: "panturrilha",
     subgrupo: "Peso corporal",
-    imagem: "",
+    imagem: "https://static.exercisedb.dev/media/0jp9Rlz.gif",
     explicacao: "Apoio em uma perna; trabalha equilíbrio e panturrilha.",
   },
   {
@@ -1552,7 +1588,8 @@ const EXERCISE_LIBRARY = [
     nome: "Remada alta na polia",
     grupo: "trapezio",
     subgrupo: "Polia",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Upright_Cable_Row/0.jpg",
     explicacao:
       "Puxe a barra da polia baixa até a altura do peito, cotovelos altos.",
   },
@@ -2170,7 +2207,8 @@ const EXERCISE_LIBRARY = [
     nome: "Tate press",
     grupo: "triceps",
     subgrupo: "Halteres",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Tate_Press/0.jpg",
     explicacao:
       "Deitado, mantenha os cotovelos abertos e desça os halteres em direção ao peito; estenda os cotovelos de volta.",
   },
@@ -2243,7 +2281,8 @@ const EXERCISE_LIBRARY = [
     nome: "Pinça de anilhas (plate pinch)",
     grupo: "antebraco",
     subgrupo: "Anilhas",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plate_Pinch/0.jpg",
     explicacao:
       "Segure anilhas lisas comprimindo-as entre os dedos e o polegar pelo tempo planejado, sem deixar cair.",
   },
@@ -2288,7 +2327,8 @@ const EXERCISE_LIBRARY = [
     nome: "Ab wheel (roda abdominal)",
     grupo: "abdomen",
     subgrupo: "Acessório",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Ab_Roller/0.jpg",
     explicacao:
       "Ajoelhado, role a roda à frente mantendo costelas encaixadas e lombar neutra; volte sem deixar o quadril cair.",
   },
@@ -2342,7 +2382,8 @@ const EXERCISE_LIBRARY = [
     nome: "Pallof press",
     grupo: "abdomen",
     subgrupo: "Polia",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pallof_Press/0.jpg",
     explicacao:
       "De lado para a polia, empurre a alça à frente resistindo à rotação do tronco e mantenha o quadril estável.",
   },
@@ -2817,7 +2858,8 @@ const EXERCISE_LIBRARY = [
     nome: "Encolhimento com barra atrás do corpo",
     grupo: "trapezio",
     subgrupo: "Barra",
-    imagem: "",
+    imagem:
+      "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shrug_Behind_The_Back/0.jpg",
     explicacao:
       "Segure a barra atrás das coxas e eleve os ombros verticalmente; use amplitude confortável e carga moderada.",
   },
