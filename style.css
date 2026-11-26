@@ -738,6 +738,7 @@ body.workout-active .bottom-nav { display: none; }
 .picker-tab.active { background: var(--primary); color: #fff; }
 
 .picker-body { padding: 12px 16px; }
+
 .pick-row {
   display: flex;
   align-items: stretch;
@@ -749,13 +750,36 @@ body.workout-active .bottom-nav { display: none; }
   transition: background .15s;
 }
 .pick-row.selected { background: rgba(124, 58, 237, 0.18); }
+
 .pick-main {
   flex: 1;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 10px 12px 12px;
+  padding: 8px 10px 8px 8px;
   text-align: left;
+  min-width: 0;
+}
+.pick-thumb {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #2a1a4e 0%, #1a1a2e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pick-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.pick-thumb-emoji {
+  font-size: 1.1rem;
+  opacity: 0.85;
 }
 .pick-check {
   width: 22px;
@@ -780,9 +804,25 @@ body.workout-active .bottom-nav { display: none; }
   flex-direction: column;
   gap: 2px;
   min-width: 0;
+  flex: 1;
 }
-.pick-nome { font-size: 0.92rem; font-weight: 600; line-height: 1.25; }
-.pick-meta { font-size: 0.72rem; color: var(--text-muted); }
+.pick-nome {
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.pick-meta {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .pick-info-btn {
   width: 44px;
   flex-shrink: 0;

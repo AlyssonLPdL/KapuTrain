@@ -13,8 +13,12 @@ const screens = {
 
 // ===== HELPERS =====
 function escape(s) {
-  return String(s ?? "").replace(/[&<>"']/g, (c) =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]
+  return String(s ?? "").replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
   );
 }
 function getLibExercise(libId) {
@@ -37,7 +41,13 @@ function showScreen(name) {
   document.querySelectorAll(".nav-btn").forEach((b) => {
     b.classList.toggle("active", b.dataset.screen === name);
   });
-  if (name === "history") { try { renderHistory(); } catch (e) { console.error(e); } }
+  if (name === "history") {
+    try {
+      renderHistory();
+    } catch (e) {
+      console.error(e);
+    }
+  }
   window.scrollTo(0, 0);
 }
 
@@ -49,7 +59,8 @@ async function init() {
 
   const hoje = new Date();
   document.getElementById("hoje-text").textContent = hoje.toLocaleDateString(
-    "pt-BR", { weekday: "long", day: "numeric", month: "long" }
+    "pt-BR",
+    { weekday: "long", day: "numeric", month: "long" },
   );
 
   // Nav
@@ -63,33 +74,62 @@ async function init() {
   });
 
   // Home
-  document.getElementById("btn-novo-treino").addEventListener("click", () => abrirModalTreino(null));
+  document
+    .getElementById("btn-novo-treino")
+    .addEventListener("click", () => abrirModalTreino(null));
 
   // Workout
-  document.getElementById("btn-voltar").addEventListener("click", voltarDoTreino);
+  document
+    .getElementById("btn-voltar")
+    .addEventListener("click", voltarDoTreino);
   document.getElementById("btn-editar").addEventListener("click", () => {
     if (session) abrirModalTreino(session.treinoId);
   });
-  document.getElementById("btn-finalizar").addEventListener("click", finalizarTreino);
+  document
+    .getElementById("btn-finalizar")
+    .addEventListener("click", finalizarTreino);
   setupCarouselEvents();
 
   // Edit modal
-  document.getElementById("modal-edit-close").addEventListener("click", () => fecharModal("modal-edit"));
-  document.getElementById("btn-add-ex-lib").addEventListener("click", abrirPicker);
-  document.getElementById("btn-save-edit").addEventListener("click", salvarTreino);
+  document
+    .getElementById("modal-edit-close")
+    .addEventListener("click", () => fecharModal("modal-edit"));
+  document
+    .getElementById("btn-add-ex-lib")
+    .addEventListener("click", abrirPicker);
+  document
+    .getElementById("btn-save-edit")
+    .addEventListener("click", salvarTreino);
 
   // Picker
-  document.getElementById("modal-picker-close").addEventListener("click", () => { pickerState = null; fecharModal("modal-picker"); });
-  document.getElementById("btn-picker-confirm").addEventListener("click", confirmarPicker);
+  document
+    .getElementById("modal-picker-close")
+    .addEventListener("click", () => {
+      pickerState = null;
+      fecharModal("modal-picker");
+    });
+  document
+    .getElementById("btn-picker-confirm")
+    .addEventListener("click", confirmarPicker);
 
   // History info
-  document.getElementById("modal-history-close").addEventListener("click", () => fecharModal("modal-history"));
-  document.getElementById("modal-info-close").addEventListener("click", () => fecharModal("modal-info"));
+  document
+    .getElementById("modal-history-close")
+    .addEventListener("click", () => fecharModal("modal-history"));
+  document
+    .getElementById("modal-info-close")
+    .addEventListener("click", () => fecharModal("modal-info"));
 
   // Timer
-  document.getElementById("timer-cancel").addEventListener("click", cancelTimer);
-  document.getElementById("timer-skip-options").addEventListener("click", skipToFinish);
-  document.getElementById("timer-skip-rest").addEventListener("click", skipToFinish);
+  document
+    .getElementById("timer-cancel")
+    .addEventListener("click", cancelTimer);
+  document
+    .getElementById("timer-skip-options")
+    .addEventListener("click", skipToFinish);
+  document
+    .getElementById("timer-skip-rest")
+    .addEventListener("click", skipToFinish);
   document.querySelectorAll(".timer-option").forEach((btn) => {
     btn.addEventListener("click", () => chooseRestTime(+btn.dataset.sec));
   });
@@ -199,7 +239,7 @@ function createExerciseCard(ex, i) {
 
   const ranges = getRanges(ex);
   const isIso = ex.unidade === "seg";
-  const grupoLabel = ex.grupo ? (GRUPOS[ex.grupo] || "") : "";
+  const grupoLabel = ex.grupo ? GRUPOS[ex.grupo] || "" : "";
   const equipLabel = ex.subgrupo || "";
 
   const imgInner = ex.imagem
@@ -228,7 +268,9 @@ function createExerciseCard(ex, i) {
     </div>
 
     <div class="series-carousel" data-ex="${i}">
-      ${ex.series.map((s, si) => `
+      ${ex.series
+        .map(
+          (s, si) => `
         <div class="serie-slide" data-serie="${si}">
           <div class="serie-header">
             <span class="serie-title">Série ${si + 1}</span>
@@ -236,20 +278,30 @@ function createExerciseCard(ex, i) {
                     data-ex="${i}" data-serie="${si}" aria-label="Concluir série">✓</button>
           </div>
           <div class="rep-pills">
-            ${ranges.map((r) => `
+            ${ranges
+              .map(
+                (r) => `
               <button class="rep-pill ${s.range === r ? "active" : ""}"
                       data-ex="${i}" data-serie="${si}" data-range="${r}">${r}</button>
-            `).join("")}
+            `,
+              )
+              .join("")}
           </div>
-          ${isIso ? "" : `
+          ${
+            isIso
+              ? ""
+              : `
             <div class="weight-stepper">
               <button class="weight-btn" data-ex="${i}" data-serie="${si}" data-action="dec">−</button>
               <span class="weight-value">${s.peso != null ? s.peso : 0} kg</span>
               <button class="weight-btn" data-ex="${i}" data-serie="${si}" data-action="inc">+</button>
             </div>
-          `}
+          `
+          }
         </div>
-      `).join("")}
+      `,
+        )
+        .join("")}
     </div>
 
     <div class="series-dots" data-ex="${i}">
@@ -264,7 +316,10 @@ function setupCarouselEvents() {
   const carousel = document.getElementById("carousel");
   carousel.addEventListener("click", (e) => {
     const infoBtn = e.target.closest(".info-btn");
-    if (infoBtn) { abrirInfoExercicio(+infoBtn.dataset.ex); return; }
+    if (infoBtn) {
+      abrirInfoExercicio(+infoBtn.dataset.ex);
+      return;
+    }
 
     const check = e.target.closest(".check-btn");
     if (check) {
@@ -286,7 +341,9 @@ function setupCarouselEvents() {
       const exIdx = +pill.dataset.ex;
       const serieIdx = +pill.dataset.serie;
       session.exercicios[exIdx].series[serieIdx].range = pill.dataset.range;
-      pill.parentElement.querySelectorAll(".rep-pill").forEach((p) => p.classList.toggle("active", p === pill));
+      pill.parentElement
+        .querySelectorAll(".rep-pill")
+        .forEach((p) => p.classList.toggle("active", p === pill));
       return;
     }
 
@@ -298,7 +355,8 @@ function setupCarouselEvents() {
       const cur = s.peso ?? 0;
       const delta = wBtn.dataset.action === "inc" ? 1 : -1;
       s.peso = Math.max(0, cur + delta);
-      wBtn.parentElement.querySelector(".weight-value").textContent = s.peso + " kg";
+      wBtn.parentElement.querySelector(".weight-value").textContent =
+        s.peso + " kg";
       return;
     }
 
@@ -322,7 +380,11 @@ function changeSeriesCount(exIdx, delta, cardEl) {
 
   if (newLen > ex.series.length) {
     while (ex.series.length < newLen) {
-      ex.series.push({ range: defaultRange, peso: ex.pesoSugerido ?? 0, feito: false });
+      ex.series.push({
+        range: defaultRange,
+        peso: ex.pesoSugerido ?? 0,
+        feito: false,
+      });
     }
   } else {
     ex.series.length = newLen;
@@ -336,43 +398,61 @@ function changeSeriesCount(exIdx, delta, cardEl) {
 
 function updateProgress() {
   const total = session.exercicios.length;
-  const done = session.exercicios.filter((ex) => ex.series.some((s) => s.feito)).length;
-  document.getElementById("workout-progress").textContent = `${done} de ${total} feitos`;
+  const done = session.exercicios.filter((ex) =>
+    ex.series.some((s) => s.feito),
+  ).length;
+  document.getElementById("workout-progress").textContent =
+    `${done} de ${total} feitos`;
 }
 
 function renderDots() {
   const dots = document.getElementById("dots");
-  dots.innerHTML = session.exercicios.map((_, i) => `<span class="dot ${i === 0 ? "active" : ""}"></span>`).join("");
+  dots.innerHTML = session.exercicios
+    .map((_, i) => `<span class="dot ${i === 0 ? "active" : ""}"></span>`)
+    .join("");
 }
 
 let carouselObserver = null;
 function setupCarouselObserver() {
   const carousel = document.getElementById("carousel");
   if (carouselObserver) carouselObserver.disconnect();
-  carouselObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
-        const idx = +entry.target.dataset.ex;
-        document.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === idx));
-      }
-    });
-  }, { root: carousel, threshold: 0.6 });
-  carousel.querySelectorAll(".exercise-card").forEach((c) => carouselObserver.observe(c));
+  carouselObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+          const idx = +entry.target.dataset.ex;
+          document
+            .querySelectorAll(".dot")
+            .forEach((d, i) => d.classList.toggle("active", i === idx));
+        }
+      });
+    },
+    { root: carousel, threshold: 0.6 },
+  );
+  carousel
+    .querySelectorAll(".exercise-card")
+    .forEach((c) => carouselObserver.observe(c));
 }
 
 function setupSeriesCarouselObserver() {
   document.querySelectorAll(".series-carousel").forEach((carousel) => {
     const exIdx = +carousel.dataset.ex;
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
-          const si = +entry.target.dataset.serie;
-          document.querySelectorAll(`.series-dots[data-ex="${exIdx}"] .series-dot`)
-            .forEach((d, i) => d.classList.toggle("active", i === si));
-        }
-      });
-    }, { root: carousel, threshold: 0.6 });
-    carousel.querySelectorAll(".serie-slide").forEach((s) => observer.observe(s));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+            const si = +entry.target.dataset.serie;
+            document
+              .querySelectorAll(`.series-dots[data-ex="${exIdx}"] .series-dot`)
+              .forEach((d, i) => d.classList.toggle("active", i === si));
+          }
+        });
+      },
+      { root: carousel, threshold: 0.6 },
+    );
+    carousel
+      .querySelectorAll(".serie-slide")
+      .forEach((s) => observer.observe(s));
   });
 }
 
@@ -380,7 +460,10 @@ function setupSeriesCarouselObserver() {
 async function finalizarTreino() {
   abortTimer();
   const algum = session.exercicios.some((ex) => ex.series.some((s) => s.feito));
-  if (!algum) { alert("Marque pelo menos uma série antes de finalizar."); return; }
+  if (!algum) {
+    alert("Marque pelo menos uma série antes de finalizar.");
+    return;
+  }
   if (!confirm("Finalizar este treino e salvar no histórico?")) return;
 
   const registro = {
@@ -399,7 +482,8 @@ async function finalizarTreino() {
 
 function voltarDoTreino() {
   const algo = session.exercicios.some((ex) => ex.series.some((s) => s.feito));
-  if (algo && !confirm("Sair sem finalizar? As marcações serão perdidas.")) return;
+  if (algo && !confirm("Sair sem finalizar? As marcações serão perdidas."))
+    return;
   abortTimer();
   session = null;
   showScreen("home");
@@ -407,27 +491,41 @@ function voltarDoTreino() {
 
 // ===== HISTÓRICO =====
 function renderHistory() {
-  if (!DATA) { setTimeout(renderHistory, 100); return; }
+  if (!DATA) {
+    setTimeout(renderHistory, 100);
+    return;
+  }
   const list = document.getElementById("history-list");
   const sub = document.getElementById("history-sub");
-  if (!list || !sub) { setTimeout(renderHistory, 100); return; }
+  if (!list || !sub) {
+    setTimeout(renderHistory, 100);
+    return;
+  }
 
   list.innerHTML = "";
   const hist = Array.isArray(DATA.historico) ? DATA.historico : [];
   const total = hist.length;
-  sub.textContent = total === 0 ? "Nenhum treino ainda" : `${total} treino${total > 1 ? "s" : ""} registrado${total > 1 ? "s" : ""}`;
+  sub.textContent =
+    total === 0
+      ? "Nenhum treino ainda"
+      : `${total} treino${total > 1 ? "s" : ""} registrado${total > 1 ? "s" : ""}`;
 
   if (total === 0) {
-    list.innerHTML = '<p class="empty">Seus treinos finalizados aparecerão aqui.</p>';
+    list.innerHTML =
+      '<p class="empty">Seus treinos finalizados aparecerão aqui.</p>';
     return;
   }
 
   hist.forEach((reg, idx) => {
     const d = new Date(reg.data);
-    const dataFmt = d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }) + " · " +
+    const dataFmt =
+      d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }) +
+      " · " +
       d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
     const exs = Array.isArray(reg.exercicios) ? reg.exercicios : [];
-    const feitos = exs.filter((ex) => Array.isArray(ex.series) && ex.series.some((s) => s.feito)).length;
+    const feitos = exs.filter(
+      (ex) => Array.isArray(ex.series) && ex.series.some((s) => s.feito),
+    ).length;
 
     const card = document.createElement("button");
     card.className = "hist-card";
@@ -447,29 +545,34 @@ function abrirDetalheHistorico(idx) {
   const reg = (DATA.historico || [])[idx];
   if (!reg) return;
   const d = new Date(reg.data);
-  document.getElementById("modal-history-title").textContent = reg.treinoNome || "Treino";
+  document.getElementById("modal-history-title").textContent =
+    reg.treinoNome || "Treino";
   const exs = Array.isArray(reg.exercicios) ? reg.exercicios : [];
   document.getElementById("modal-history-body").innerHTML = `
     <p style="color:var(--text-muted);font-size:.85rem;margin:0 0 12px;">
       ${d.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })} às
       ${d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
     </p>
-    ${exs.map((ex) => {
-      const series = Array.isArray(ex.series) ? ex.series : [];
-      const feitas = series.filter((s) => s.feito);
-      if (feitas.length === 0) return "";
-      const isIso = ex.unidade === "seg";
-      return `
+    ${exs
+      .map((ex) => {
+        const series = Array.isArray(ex.series) ? ex.series : [];
+        const feitas = series.filter((s) => s.feito);
+        if (feitas.length === 0) return "";
+        const isIso = ex.unidade === "seg";
+        return `
         <div class="hist-detail-ex">
           <strong>${escape(ex.nome || "Exercício")}</strong>
-          ${feitas.map((s, i) => {
-            const range = s.range || (s.reps != null ? `${s.reps}` : "-");
-            const peso = !isIso && s.peso != null ? ` · ${s.peso}kg` : "";
-            return `<div class="serie-line">Série ${i + 1}: ${range}${peso}</div>`;
-          }).join("")}
+          ${feitas
+            .map((s, i) => {
+              const range = s.range || (s.reps != null ? `${s.reps}` : "-");
+              const peso = !isIso && s.peso != null ? ` · ${s.peso}kg` : "";
+              return `<div class="serie-line">Série ${i + 1}: ${range}${peso}</div>`;
+            })
+            .join("")}
         </div>
       `;
-    }).join("")}
+      })
+      .join("")}
   `;
   document.getElementById("modal-history").classList.add("active");
 }
@@ -477,7 +580,7 @@ function abrirDetalheHistorico(idx) {
 // ===== INFO EXERCÍCIO =====
 function mostrarInfo(ex) {
   document.getElementById("modal-info-title").textContent = ex.nome;
-  const grupoLabel = ex.grupo ? (GRUPOS[ex.grupo] || "") : "";
+  const grupoLabel = ex.grupo ? GRUPOS[ex.grupo] || "" : "";
   const equip = ex.subgrupo || "";
   document.getElementById("modal-info-body").innerHTML = `
     ${ex.imagem ? `<img src="${escape(ex.imagem)}" alt="${escape(ex.nome)}" style="width:100%;border-radius:12px;margin-bottom:14px;display:block;">` : ""}
@@ -509,7 +612,9 @@ function abrirModalTreino(treinoId) {
     nome: t ? t.nome : "",
     exercicios: t ? JSON.parse(JSON.stringify(t.exercicios)) : [],
   };
-  document.getElementById("modal-edit-title").textContent = isNovo ? "Novo treino" : "Editar treino";
+  document.getElementById("modal-edit-title").textContent = isNovo
+    ? "Novo treino"
+    : "Editar treino";
   renderTreinoBody();
   document.getElementById("modal-edit").classList.add("active");
 }
@@ -525,9 +630,13 @@ function renderTreinoBody() {
   `;
 
   if (editTreinoDraft.exercicios.length === 0) {
-    body.innerHTML = header + `<p class="empty-mini">Nenhum exercício ainda.<br>Toque em "+ Adicionar exercício" pra escolher da biblioteca.</p>`;
+    body.innerHTML =
+      header +
+      `<p class="empty-mini">Nenhum exercício ainda.<br>Toque em "+ Adicionar exercício" pra escolher da biblioteca.</p>`;
   } else {
-    body.innerHTML = header + `
+    body.innerHTML =
+      header +
+      `
       <div class="edit-ex-list" id="edit-ex-list">
         ${editTreinoDraft.exercicios.map((ex, i) => renderEditExRow(ex, i)).join("")}
       </div>
@@ -535,7 +644,9 @@ function renderTreinoBody() {
 
     enableDragReorder(document.getElementById("edit-ex-list"), () => {
       const rows = [...document.querySelectorAll("#edit-ex-list [data-idx]")];
-      editTreinoDraft.exercicios = rows.map((r) => editTreinoDraft.exercicios[+r.dataset.idx]);
+      editTreinoDraft.exercicios = rows.map(
+        (r) => editTreinoDraft.exercicios[+r.dataset.idx],
+      );
       renderTreinoBody();
     });
 
@@ -543,10 +654,14 @@ function renderTreinoBody() {
     document.querySelectorAll("#edit-ex-list .edit-ex-row").forEach((row) => {
       const idx = +row.dataset.idx;
       row.querySelector(".ex-series").oninput = (e) => {
-        editTreinoDraft.exercicios[idx].series = Math.max(1, +e.target.value || 1);
+        editTreinoDraft.exercicios[idx].series = Math.max(
+          1,
+          +e.target.value || 1,
+        );
       };
       row.querySelector(".ex-peso").oninput = (e) => {
-        editTreinoDraft.exercicios[idx].pesoSugerido = e.target.value === "" ? null : Number(e.target.value);
+        editTreinoDraft.exercicios[idx].pesoSugerido =
+          e.target.value === "" ? null : Number(e.target.value);
       };
       row.querySelector(".btn-remove").onclick = () => {
         editTreinoDraft.exercicios.splice(idx, 1);
@@ -555,13 +670,14 @@ function renderTreinoBody() {
     });
   }
 
-  document.getElementById("edit-treino-nome").oninput = (e) => (editTreinoDraft.nome = e.target.value);
+  document.getElementById("edit-treino-nome").oninput = (e) =>
+    (editTreinoDraft.nome = e.target.value);
 }
 
 function renderEditExRow(ex, i) {
   const lib = getLibExercise(ex.libId);
   const nome = lib?.nome || ex.nome || "(exercício removido)";
-  const grupoLabel = lib ? (GRUPOS[lib.grupo] || "") : "";
+  const grupoLabel = lib ? GRUPOS[lib.grupo] || "" : "";
   const equip = lib?.subgrupo || "";
   return `
     <div class="edit-ex-row" data-idx="${i}">
@@ -720,7 +836,10 @@ function abrirPicker() {
 
   const s = document.getElementById("picker-search");
   s.value = "";
-  s.oninput = () => { pickerState.busca = s.value; renderPickerList(); };
+  s.oninput = () => {
+    pickerState.busca = s.value;
+    renderPickerList();
+  };
 
   renderPickerTabs();
   renderPickerList();
@@ -730,9 +849,13 @@ function abrirPicker() {
 function renderPickerTabs() {
   const tabs = document.getElementById("picker-tabs");
   const groups = [["todos", "Todos"], ...Object.entries(GRUPOS)];
-  tabs.innerHTML = groups.map(([id, label]) => `
+  tabs.innerHTML = groups
+    .map(
+      ([id, label]) => `
     <button class="picker-tab ${pickerState.grupoAtivo === id ? "active" : ""}" data-grupo="${id}">${escape(label)}</button>
-  `).join("");
+  `,
+    )
+    .join("");
   tabs.querySelectorAll(".picker-tab").forEach((b) => {
     b.onclick = () => {
       pickerState.grupoAtivo = b.dataset.grupo;
@@ -746,7 +869,11 @@ function renderPickerList() {
   const list = document.getElementById("picker-list");
   const busca = pickerState.busca.trim().toLowerCase();
   const items = EXERCISE_LIBRARY.filter((e) => {
-    if (pickerState.grupoAtivo !== "todos" && e.grupo !== pickerState.grupoAtivo) return false;
+    if (
+      pickerState.grupoAtivo !== "todos" &&
+      e.grupo !== pickerState.grupoAtivo
+    )
+      return false;
     if (busca && !e.nome.toLowerCase().includes(busca)) return false;
     return true;
   });
@@ -757,21 +884,27 @@ function renderPickerList() {
     return;
   }
 
-  list.innerHTML = items.map((e) => {
-    const sel = pickerState.selecionados.includes(e.id);
-    return `
+  list.innerHTML = items
+    .map((e) => {
+      const sel = pickerState.selecionados.includes(e.id);
+      const thumb = e.imagem
+        ? `<img src="${escape(e.imagem)}" alt="" loading="lazy">`
+        : `<span class="pick-thumb-emoji">💪</span>`;
+      return `
       <div class="pick-row ${sel ? "selected" : ""}" data-lib="${e.id}">
         <button class="pick-main" data-lib="${e.id}">
-          <span class="pick-check">${sel ? "✓" : ""}</span>
+          <span class="pick-thumb">${thumb}</span>
           <span class="pick-info">
             <span class="pick-nome">${escape(e.nome)}</span>
             <span class="pick-meta">${escape(GRUPOS[e.grupo] || "")} · ${escape(e.subgrupo || "")}</span>
           </span>
+          <span class="pick-check">${sel ? "✓" : ""}</span>
         </button>
         <button class="pick-info-btn" data-info="${e.id}" aria-label="Info">ⓘ</button>
       </div>
     `;
-  }).join("");
+    })
+    .join("");
 
   list.querySelectorAll(".pick-main").forEach((btn) => {
     btn.onclick = () => {
@@ -791,7 +924,10 @@ function renderPickerList() {
     };
   });
   list.querySelectorAll(".pick-info-btn").forEach((btn) => {
-    btn.onclick = (e) => { e.stopPropagation(); abrirInfoLib(btn.dataset.info); };
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      abrirInfoLib(btn.dataset.info);
+    };
   });
 
   updatePickerCount();
@@ -799,7 +935,8 @@ function renderPickerList() {
 
 function updatePickerCount() {
   const el = document.getElementById("picker-count");
-  if (el && pickerState) el.textContent = `${pickerState.selecionados.length} selecionado(s)`;
+  if (el && pickerState)
+    el.textContent = `${pickerState.selecionados.length} selecionado(s)`;
 }
 
 function confirmarPicker() {
@@ -841,8 +978,14 @@ function confirmarPicker() {
 // ===== SALVAR TREINO =====
 async function salvarTreino() {
   const nome = (editTreinoDraft.nome || "").trim();
-  if (!nome) { alert("Dê um nome ao treino."); return; }
-  if (editTreinoDraft.exercicios.length === 0) { alert("Adicione pelo menos um exercício."); return; }
+  if (!nome) {
+    alert("Dê um nome ao treino.");
+    return;
+  }
+  if (editTreinoDraft.exercicios.length === 0) {
+    alert("Adicione pelo menos um exercício.");
+    return;
+  }
 
   const exercicios = editTreinoDraft.exercicios.map((ex) => {
     const lib = getLibExercise(ex.libId);
@@ -879,7 +1022,9 @@ let activeTimer = null;
 function startSeriesFlow(exIdx, serieIdx) {
   if (activeTimer || !session) return;
   activeTimer = {
-    exIdx, serieIdx, stage: "prep",
+    exIdx,
+    serieIdx,
+    stage: "prep",
     endAt: Date.now() + 10000,
     interval: null,
   };
@@ -894,7 +1039,10 @@ function tickTimer() {
   if (activeTimer.stage === "prep") {
     const el = document.getElementById("timer-prep-num");
     if (el) el.textContent = Math.ceil(remaining / 1000);
-    if (remaining <= 0) { activeTimer.stage = "options"; renderTimerStage(); }
+    if (remaining <= 0) {
+      activeTimer.stage = "options";
+      renderTimerStage();
+    }
   } else if (activeTimer.stage === "rest") {
     const el = document.getElementById("timer-rest-num");
     if (el) el.textContent = formatTimer(Math.ceil(remaining / 1000));
@@ -911,14 +1059,16 @@ function renderTimerStage() {
 
   if (activeTimer.stage === "prep") {
     prep.style.display = "";
-    document.getElementById("timer-prep-num").textContent =
-      Math.ceil(Math.max(0, activeTimer.endAt - Date.now()) / 1000);
+    document.getElementById("timer-prep-num").textContent = Math.ceil(
+      Math.max(0, activeTimer.endAt - Date.now()) / 1000,
+    );
   } else if (activeTimer.stage === "options") {
     options.style.display = "";
   } else if (activeTimer.stage === "rest") {
     rest.style.display = "";
-    document.getElementById("timer-rest-num").textContent =
-      formatTimer(Math.ceil(Math.max(0, activeTimer.endAt - Date.now()) / 1000));
+    document.getElementById("timer-rest-num").textContent = formatTimer(
+      Math.ceil(Math.max(0, activeTimer.endAt - Date.now()) / 1000),
+    );
   }
 }
 
@@ -929,8 +1079,12 @@ function chooseRestTime(sec) {
   renderTimerStage();
 }
 
-function skipToFinish() { if (activeTimer) finishSeriesFlow(true); }
-function cancelTimer() { finishSeriesFlow(false); }
+function skipToFinish() {
+  if (activeTimer) finishSeriesFlow(true);
+}
+function cancelTimer() {
+  finishSeriesFlow(false);
+}
 
 function abortTimer() {
   if (!activeTimer) return;
@@ -950,7 +1104,9 @@ function finishSeriesFlow(validate) {
   const s = session.exercicios[exIdx]?.series[serieIdx];
   if (!s) return;
   s.feito = true;
-  const check = document.querySelector(`.check-btn[data-ex="${exIdx}"][data-serie="${serieIdx}"]`);
+  const check = document.querySelector(
+    `.check-btn[data-ex="${exIdx}"][data-serie="${serieIdx}"]`,
+  );
   if (check) check.classList.add("checked");
   updateProgress();
 
@@ -958,8 +1114,15 @@ function finishSeriesFlow(validate) {
   const ex = session.exercicios[exIdx];
   if (ex && serieIdx + 1 < ex.series.length) {
     setTimeout(() => {
-      const slide = document.querySelector(`.series-carousel[data-ex="${exIdx}"] [data-serie="${serieIdx + 1}"]`);
-      if (slide) slide.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      const slide = document.querySelector(
+        `.series-carousel[data-ex="${exIdx}"] [data-serie="${serieIdx + 1}"]`,
+      );
+      if (slide)
+        slide.scrollIntoView({
+          behavior: "smooth",
+          inline: "center",
+          block: "nearest",
+        });
     }, 150);
   }
 }
